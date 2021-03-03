@@ -217,7 +217,11 @@ public class PortableCharger extends SimpleSlimefunItem<ItemUseHandler> implemen
         LARGE(8192, 512),
         CARBONADO(65526, 4096);
 
-        public int chargeCapacity;
+        Type(int chargeCapacity, int chargeSpeed) {
+			this.chargeCapacity = chargeCapacity;
+			this.chargeSpeed = chargeSpeed;
+		}
+		public int chargeCapacity;
         public int chargeSpeed;
 
     }
