@@ -137,7 +137,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
                              String[] args) {
 
         if (args.length == 0) {
-            sender.sendMessage("FluffyMachines > Gotta be longer than that");
+            sender.sendMessage("FluffyMachines>要比那更长");
             return true;
         }
         if (args[0].equalsIgnoreCase("replace") && sender instanceof Player) {
@@ -168,7 +168,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
             Player p = (Player) sender;
 
             if (args.length != 3) {
-                Utils.send(p, "&cPlease specify the key and the data");
+                Utils.send(p, "&请指定密钥和数据");
                 return true;
 
             } else {
@@ -177,10 +177,10 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
                     && BlockStorage.hasBlockInfo(rayResult.getHitBlock())) {
 
                     BlockStorage.addBlockInfo(rayResult.getHitBlock(), args[1], args[2]);
-                    Utils.send(p, "&aInfo has been added.");
+                    Utils.send(p, "&a信息已添加。");
 
                 } else {
-                    Utils.send(p, "&cYou must be looking at a Slimefun block");
+                    Utils.send(p, "&c 你必须看向一个粘液科技方块");
                 }
                 return true;
             }

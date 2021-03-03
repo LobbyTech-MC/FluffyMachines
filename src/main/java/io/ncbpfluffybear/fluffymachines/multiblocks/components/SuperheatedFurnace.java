@@ -73,7 +73,7 @@ public class SuperheatedFurnace extends NonHopperableBlock {
     public SuperheatedFurnace(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
-        new BlockMenuPreset(getId(), "&cFoundry") {
+        new BlockMenuPreset(getId(), "&c铸造器") {
 
             @Override
             public void init() {
@@ -84,9 +84,9 @@ public class SuperheatedFurnace extends NonHopperableBlock {
             public void newInstance(@Nonnull BlockMenu menu, @Nonnull Block b) {
                 if (BlockStorage.getLocationInfo(b.getLocation(), "stored") == null) {
 
-                    menu.replaceExistingItem(4, new CustomItem(Material.GUNPOWDER, "&6Dust Available: &e0", "&a> &eLeft Click &ahere to retrieve 1", "&a> &eLeft Click &ahere to retrieve 64"));
-                    menu.replaceExistingItem(7, new CustomItem(Material.IRON_INGOT, "&6Ingots Available: &e0", "&a> &eRight Click &ahere to retrieve 1", "&a> &eLeft Click &ahere to retrieve 64"));
-                    menu.replaceExistingItem(1, new CustomItem(Material.CHEST, "&6Melted Dust: &e0 &7(0%)", "&bType: None",  "&7Stacks: 0"));
+                    menu.replaceExistingItem(4, new CustomItem(Material.GUNPOWDER, "&6可用灰尘: &e0", "&a> &e左键单击此处并取回1", "&a> &e左键单击并在此处检索 64"));
+                    menu.replaceExistingItem(7, new CustomItem(Material.IRON_INGOT, "&6可用锭: &e0", "&a> &e右键单击并在此处检索1", "&a> &e左键单击并在此处检索 64"));
+                    menu.replaceExistingItem(1, new CustomItem(Material.CHEST, "&6融尘: &e0 &7(0%)", "&b类型: 无",  "&7组: 0"));
 
                     BlockStorage.addBlockInfo(b, "stored", "0");
                 }
@@ -144,7 +144,7 @@ public class SuperheatedFurnace extends NonHopperableBlock {
                         || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_PICKAXE.getItem()
                         || sfItem == FluffyItems.UPGRADED_EXPLOSIVE_SHOVEL.getItem()
                 )) {
-                    Utils.send(p, "&cYou can not break the superheated furnace using explosive tools!");
+                    Utils.send(p, "&c你不能用爆炸工具摧毁它们!");
                     return true;
                 }
 
@@ -158,7 +158,7 @@ public class SuperheatedFurnace extends NonHopperableBlock {
                 }
 
                 if (itemCount > 5) {
-                    Utils.send(p, "&cPlease remove nearby items before breaking this superheated furnace!");
+                    Utils.send(p, "&c在拆除此过热炉之前，请先移走附近的物品!");
                     return false;
                 }
 
@@ -172,8 +172,8 @@ public class SuperheatedFurnace extends NonHopperableBlock {
 
                     if (stored > OVERFLOW_AMOUNT) {
 
-                        Utils.send(p, "&eThere are more than " + OVERFLOW_AMOUNT + " items in this superheated furnace! " +
-                            "Dropping " + OVERFLOW_AMOUNT + " items instead!");
+                        Utils.send(p, "&e有超过 " + OVERFLOW_AMOUNT + " 物品在火热炉! " +
+                            "掉落的 " + OVERFLOW_AMOUNT + " 物品代替!");
                         int toRemove = OVERFLOW_AMOUNT;
                         while (toRemove >= stackSize) {
 
