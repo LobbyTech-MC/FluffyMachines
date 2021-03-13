@@ -168,22 +168,20 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
             Player p = (Player) sender;
 
             if (args.length != 3) {
-                Utils.send(p, "&请指定密钥和数据");
-                return true;
-
+                Utils.send(p, "&c请指定密钥和数据");
             } else {
                 RayTraceResult rayResult = p.rayTraceBlocks(5d);
                 if (rayResult != null && rayResult.getHitBlock() != null
                     && BlockStorage.hasBlockInfo(rayResult.getHitBlock())) {
 
                     BlockStorage.addBlockInfo(rayResult.getHitBlock(), args[1], args[2]);
-                    Utils.send(p, "&a信息已添加。");
+                    Utils.send(p, "&a信息已添加");
 
                 } else {
-                    Utils.send(p, "&c 你必须看向一个粘液科技方块");
+                    Utils.send(p, "&c你必须看向一个粘液科技方块");
                 }
-                return true;
             }
+            return true;
 
         }
         return false;
