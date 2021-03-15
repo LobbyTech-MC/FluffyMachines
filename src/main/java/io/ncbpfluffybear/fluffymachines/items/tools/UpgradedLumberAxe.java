@@ -26,7 +26,7 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
     private static final int MAX_STRIPPED = 200;
     private static final int RANGE = 2;
 
-    private final ItemSetting<Boolean> triggerOtherPlugins = new ItemSetting<>("trigger-other-plugins", true);
+    private final ItemSetting<Boolean> triggerOtherPlugins = new ItemSetting<>(this, "trigger-other-plugins", true);
 
     public UpgradedLumberAxe(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);

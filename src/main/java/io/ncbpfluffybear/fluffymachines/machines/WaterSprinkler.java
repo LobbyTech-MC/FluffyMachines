@@ -13,7 +13,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
-import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.AbstractGrowthAccelerator;
+import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.accelerators.AbstractGrowthAccelerator;
 import io.github.thebusybiscuit.slimefun4.implementation.items.electric.machines.accelerators.CropGrowthAccelerator;
 import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
@@ -33,7 +33,7 @@ import me.mrCookieSlime.Slimefun.cscorelib2.item.CustomItem;
  */
 public class WaterSprinkler extends AbstractGrowthAccelerator {
 
-    public static final ItemSetting<Double> successChance = new ItemSetting<>("success-chance", 0.5);
+    public static ItemSetting<Double> successChance;
     public static final int ENERGY_CONSUMPTION = 2;
     public static final int CAPACITY = 128;
     private static final int RADIUS = 2;
@@ -46,7 +46,7 @@ public class WaterSprinkler extends AbstractGrowthAccelerator {
     private static final CustomItem waterFoundItem = new CustomItem(Material.WATER_BUCKET,
         "&b检测到水"
     );
-    private final ItemSetting<Boolean> particles = new ItemSetting<>("particles", true);
+    private final ItemSetting<Boolean> particles;
 
     public WaterSprinkler(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
@@ -59,6 +59,9 @@ public class WaterSprinkler extends AbstractGrowthAccelerator {
                 blockMenuPreset.addItem(PROGRESS_SLOT, noWaterItem);
             });
 
+        successChance = new ItemSetting<>(this, "success-chance", 0.5);
+        particles = new ItemSetting<>(this, "particles", true);
+        
         addItemSetting(successChance);
         addItemSetting(particles);
     }

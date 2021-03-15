@@ -19,7 +19,6 @@ import java.util.Set;
  * @author NCBPFluffyBear
  * @author J3fftw1
  */
-@SuppressWarnings("NullableProblems")
 public class GlowEnchant extends Enchantment {
 
     private final Set<String> ids = new HashSet<>();

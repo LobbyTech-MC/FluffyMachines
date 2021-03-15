@@ -38,7 +38,7 @@ public class WarpPadConfigurator extends SlimefunItem implements Listener {
     private final NamespacedKey world = new NamespacedKey(FluffyMachines.getInstance(), "world");
 
     private final int LORE_COORDINATE_INDEX = 4;
-    private final ItemSetting<Integer> MAX_DISTANCE = new ItemSetting<>("max-distance", 100);
+    private final ItemSetting<Integer> MAX_DISTANCE = new ItemSetting<>(this, "max-distance", 100);
 
     public WarpPadConfigurator(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);

@@ -38,11 +38,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class WateringCan extends SimpleSlimefunItem<ItemUseHandler> {
 
-    public static final ItemSetting<Integer> maxUses = new ItemSetting<>("max-uses", 10);
-    public static final ItemSetting<Double> sugarCaneSuccessChance = new ItemSetting<>("sugar-cane-success-chance",
-        0.3);
-    public static final ItemSetting<Double> cropSuccessChance = new ItemSetting<>("crop-success-chance", 0.3);
-    public static final ItemSetting<Double> treeSuccessChance = new ItemSetting<>("tree-success-chance", 0.3);
+    public static ItemSetting<Integer> maxUses;
+    public static ItemSetting<Double> sugarCaneSuccessChance;
+    public static ItemSetting<Double> cropSuccessChance;
+    public static ItemSetting<Double> treeSuccessChance;
 
     private static final int USE_INDEX = 7;
     private static final int MAX_SUGAR_GROW_HEIGHT = 5;
@@ -54,6 +53,11 @@ public class WateringCan extends SimpleSlimefunItem<ItemUseHandler> {
     public WateringCan(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
+        maxUses = new ItemSetting<>(this, "max-uses", 10);
+        sugarCaneSuccessChance = new ItemSetting<>(this, "sugar-cane-success-chance",0.3);
+        cropSuccessChance = new ItemSetting<>(this, "crop-success-chance", 0.3);
+        treeSuccessChance = new ItemSetting<>(this, "tree-success-chance", 0.3);
+        
         addItemSetting(maxUses);
         addItemSetting(sugarCaneSuccessChance);
         addItemSetting(cropSuccessChance);
@@ -242,4 +246,12 @@ public class WateringCan extends SimpleSlimefunItem<ItemUseHandler> {
         }
         return treeType;
     }
+
+	public static String getFullcan() {
+		return fullCan;
+	}
+
+	public static String getEmptycan() {
+		return emptyCan;
+	}
 }

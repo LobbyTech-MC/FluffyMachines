@@ -119,7 +119,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
         // Register Events Class
         getServer().getPluginManager().registerEvents(new Events(), this);
 
-        final Metrics metrics = new Metrics(this, 8927);
+        new Metrics(this, 8927);
 
         getLogger().log(Level.INFO, ChatColor.GREEN + "Hi there! Want to share your server with the " +
             "Slimefun community?");

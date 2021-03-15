@@ -1,14 +1,18 @@
 package io.ncbpfluffybear.fluffymachines.items;
 
-import io.github.thebusybiscuit.slimefun4.core.handlers.ItemDropHandler;
-import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
-import io.ncbpfluffybear.fluffymachines.FluffyMachines;
-import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import me.mrCookieSlime.Slimefun.Lists.RecipeType;
-import me.mrCookieSlime.Slimefun.Objects.Category;
-import me.mrCookieSlime.Slimefun.api.Slimefun;
-import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
-import org.bukkit.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -17,12 +21,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import io.github.thebusybiscuit.slimefun4.core.handlers.ItemDropHandler;
+import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
+import io.ncbpfluffybear.fluffymachines.FluffyMachines;
+import io.ncbpfluffybear.fluffymachines.utils.Utils;
+import me.mrCookieSlime.Slimefun.Lists.RecipeType;
+import me.mrCookieSlime.Slimefun.Objects.Category;
+import me.mrCookieSlime.Slimefun.api.SlimefunItemStack;
 
 /**
  * The Fireproof Rune prevents items from
@@ -54,7 +59,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
         return (e, p, item) -> {
             if (isItem(item.getItemStack())) {
 
-                if (!Slimefun.hasUnlocked(p, this, true)) {
+                if (this.canUse(p, false)) {
                     return true;
                 }
 

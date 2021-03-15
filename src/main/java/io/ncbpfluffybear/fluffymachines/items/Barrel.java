@@ -64,7 +64,7 @@ public class Barrel extends NonHopperableBlock implements HologramOwner {
 
     private final int MAX_STORAGE;
 
-    private final ItemSetting<Boolean> showHologram = new ItemSetting<>("show-hologram", true);
+    private final ItemSetting<Boolean> showHologram = new ItemSetting<>(this, "show-hologram", true);
 
     public Barrel(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe, String name,
                   int MAX_STORAGE) {
