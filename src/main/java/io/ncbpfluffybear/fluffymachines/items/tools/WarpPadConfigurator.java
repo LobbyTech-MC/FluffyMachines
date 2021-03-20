@@ -1,10 +1,12 @@
 package io.ncbpfluffybear.fluffymachines.items.tools;
 
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
+import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.implementation.SlimefunPlugin;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.github.thebusybiscuit.slimefun4.utils.holograms.SimpleHologram;
 import io.ncbpfluffybear.fluffymachines.FluffyMachines;
+import io.ncbpfluffybear.fluffymachines.machines.WarpPad;
 import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
 import me.mrCookieSlime.Slimefun.Lists.RecipeType;
@@ -30,14 +32,14 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
-public class WarpPadConfigurator extends SlimefunItem implements Listener {
+public class WarpPadConfigurator extends SlimefunItem implements HologramOwner, Listener {
 
     private final NamespacedKey xCoord = new NamespacedKey(FluffyMachines.getInstance(), "xCoordinate");
     private final NamespacedKey yCoord = new NamespacedKey(FluffyMachines.getInstance(), "yCoordinate");
     private final NamespacedKey zCoord = new NamespacedKey(FluffyMachines.getInstance(), "zCoordinate");
     private final NamespacedKey world = new NamespacedKey(FluffyMachines.getInstance(), "world");
 
-    private final int LORE_COORDINATE_INDEX = 4;
+    private static final int LORE_COORDINATE_INDEX = 4;
     private final ItemSetting<Integer> MAX_DISTANCE = new ItemSetting<>(this, "max-distance", 100);
 
     public WarpPadConfigurator(Category category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
@@ -85,7 +87,7 @@ public class WarpPadConfigurator extends SlimefunItem implements Listener {
 
                         item.setItemMeta(meta);
 
-                        SimpleHologram.update(b, "&a&l目的地");
+                        updateHologram(b, "&a&l目的地");
                         BlockStorage.addBlockInfo(b, "type", "destination");
                         Utils.send(p, "&3此板已被标记为&a目的地 &3并绑定到您的配置器");
 
@@ -131,6 +133,6 @@ public class WarpPadConfigurator extends SlimefunItem implements Listener {
         BlockStorage.addBlockInfo(b, "y", String.valueOf(y));
         BlockStorage.addBlockInfo(b, "z", String.valueOf(z));
 
-        SimpleHologram.update(b, "&a&l起点");
+        updateHologram(b, "&a&l起点");
     }
 }

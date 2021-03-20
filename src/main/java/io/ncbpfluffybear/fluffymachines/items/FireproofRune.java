@@ -58,8 +58,7 @@ public class FireproofRune extends SimpleSlimefunItem<ItemDropHandler> {
     public ItemDropHandler getItemHandler() {
         return (e, p, item) -> {
             if (isItem(item.getItemStack())) {
-
-                if (this.canUse(p, false)) {
+                if (!this.canUse(p, true)) {
                     return true;
                 }
 
