@@ -371,7 +371,7 @@ public class FluffyItems {
     );
     public static final SlimefunItemStack SCYTHE = new SlimefunItemStack("SCYTHE",
         Material.IRON_HOE,
-        "&镰",
+        "&6&l超级收割者",
         "",
         "&7一次破坏五个作物"
     );
