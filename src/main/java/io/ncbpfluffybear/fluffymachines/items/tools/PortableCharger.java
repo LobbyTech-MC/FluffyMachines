@@ -98,7 +98,6 @@ public class PortableCharger extends SimpleSlimefunItem<ItemUseHandler> implemen
                     SlimefunItem sfItem = SlimefunItem.getByItem(deviceItem);
 
                     if (sfItem instanceof PortableCharger) {
-                        p.closeInventory();
                         Utils.send(p, "&c您无法为便携式充电器充电");
                     }
 
