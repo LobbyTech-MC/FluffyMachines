@@ -8,8 +8,10 @@ import io.github.thebusybiscuit.slimefun4.utils.itemstack.ColoredFireworkStar;
 import io.ncbpfluffybear.fluffymachines.FluffyMachines;
 import io.ncbpfluffybear.fluffymachines.items.Barrel;
 import io.ncbpfluffybear.fluffymachines.items.FireproofRune;
+import io.ncbpfluffybear.fluffymachines.items.tools.FluffyWrench;
 import io.ncbpfluffybear.fluffymachines.items.tools.PortableCharger;
 import io.ncbpfluffybear.fluffymachines.machines.AdvancedAutoDisenchanter;
+import io.ncbpfluffybear.fluffymachines.machines.AdvancedChargingBench;
 import io.ncbpfluffybear.fluffymachines.machines.AutoAncientAltar;
 import io.ncbpfluffybear.fluffymachines.objects.AutoCrafter;
 import io.ncbpfluffybear.fluffymachines.machines.AutoCraftingTable;
@@ -445,8 +447,8 @@ public class FluffyItems {
     );
 
     public static final SlimefunItemStack FLUFFY_WRENCH = new SlimefunItemStack("FLUFFY_WRENCH",
-        Material.GOLDEN_AXE,
-        "&6蓬松的扳手",
+        FluffyWrench.Wrench.DEFAULT.getMaterial(),
+        "&6蓬松扳手",
         "",
         "&7用于快速移除Slimefun货物节点",
         "&7和电力组件",
@@ -454,11 +456,56 @@ public class FluffyItems {
         "&e单击选择块以将其破坏"
     );
 
+    public static final SlimefunItemStack REINFORCED_FLUFFY_WRENCH =
+        new SlimefunItemStack("REINFORCED_FLUFFY_WRENCH",
+        FluffyWrench.Wrench.REINFORCED.getMaterial(),
+        "&bReinforced Fluffy Wrench",
+        "",
+        "&7Used to quickly remove Slimefun cargo nodes",
+        "&7and electricity components",
+        "",
+        "&eLeft&7/&eRight Click &7a compatible block to break it"
+    );
+
+    public static final SlimefunItemStack CARBONADO_FLUFFY_WRENCH =
+        new SlimefunItemStack("CARBONADO_FLUFFY_WRENCH",
+        FluffyWrench.Wrench.CARBONADO.getMaterial(),
+        "&7Carbonado Fluffy Wrench",
+        "",
+        "&7Used to quickly remove Slimefun cargo nodes",
+        "&7and electricity components",
+        "",
+        "&eLeft&7/&eRight Click &7a compatible block to break it",
+        "",
+        LoreBuilder.powerCharged(0, FluffyWrench.Wrench.CARBONADO.getMaxCharge())
+    );
+
     public static final SlimefunItemStack PAXEL = new SlimefunItemStack("PAXEL",
         Material.DIAMOND_PICKAXE,
         "&bPaxel",
         "",
         "&7A pickaxe, axe, and shovel in one tool!"
+    );
+
+    public static final SlimefunItemStack ADVANCED_CHARGING_BENCH = new SlimefunItemStack(
+        "ADVANCED_CHARGING_BENCH",
+        Material.SMITHING_TABLE,
+        "&cAdvanced Charging Bench",
+        "",
+        "&7Charges items",
+        "&7Can be upgraded using an &6ACB Upgrade Card"
+    );
+
+    public static final SlimefunItemStack ACB_UPGRADE_CARD = new SlimefunItemStack(
+        "ACB_UPGRADE_CARD",
+        Material.PAPER,
+        "&6ACB Upgrade Card",
+        "",
+        "&eRight Click &7onto an &cAdvanced Charging Bench",
+        "",
+        "&6Charge Speed &a+" + AdvancedChargingBench.CHARGE + "J",
+        "&6Capacity &a+" + AdvancedChargingBench.CAPACITY +"J",
+        "&6Energy Consumption &c+" + AdvancedChargingBench.ENERGY_CONSUMPTION + "J"
     );
 
     private static final Enchantment glowEnchant = Enchantment.getByKey(Constants.GLOW_ENCHANT);
