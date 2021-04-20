@@ -101,7 +101,7 @@ public class PortableCharger extends SimpleSlimefunItem<ItemUseHandler> implemen
                         Utils.send(p, "&c您无法为便携式充电器充电");
                     }
 
-                    if (sfItem instanceof Rechargeable) {
+                    if (sfItem instanceof Rechargeable && sfItem != null) {
 
                         Rechargeable device = (Rechargeable) sfItem;
                         float neededCharge = device.getMaxItemCharge(deviceItem)
@@ -156,7 +156,7 @@ public class PortableCharger extends SimpleSlimefunItem<ItemUseHandler> implemen
         SlimefunItem sfItem1 = SlimefunItem.getByItem(e.getCurrentItem());
         SlimefunItem sfItem2 = SlimefunItem.getByItem(e.getCursor());
         if ((sfItem1 instanceof PortableCharger || sfItem2 instanceof PortableCharger)
-            && e.getWhoClicked().getOpenInventory().getTitle().contains("Portable Charger")) {
+            && e.getWhoClicked().getOpenInventory().getTitle().contains("便携式充电器")) {
             e.setCancelled(true);
         }
     }
