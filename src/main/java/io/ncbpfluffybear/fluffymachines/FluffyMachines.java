@@ -163,7 +163,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
                              String[] args) {
 
         if (args.length == 0) {
-            sender.sendMessage("FluffyMachines>要比那更长");
+            sender.sendMessage("蓬松机器> 命令参数不全");
             return true;
         }
         if (args[0].equalsIgnoreCase("replace") && sender instanceof Player) {

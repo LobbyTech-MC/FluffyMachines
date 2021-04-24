@@ -49,12 +49,12 @@ public class FluffyItems {
 
     public static final SlimefunItemStack FLUFFYMACHINES_INFO = new SlimefunItemStack("FLUFFYMACHINES_INFO",
         Material.ORANGE_WOOL,
-        "&6&lFluffyMachines信息",
+        "&6&l蓬松机器信息",
         "",
         "&e" + FluffyMachines.getInstance().getName() + " " + FluffyMachines.getInstance().getPluginVersion(),
         "",
-        "&e左键&7以获取Wiki链接",
-        "&右键单击&7以获取错误报告链接"
+        "&e左键&7以获取帮助链接",
+        "&e右键&7获取反馈漏洞链接"
     );
 
     // Barrels
