@@ -52,7 +52,7 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
     private static final int[] INPUT_SLOTS = new int[]{10, 11, 12, 19, 20, 21, 28, 29, 30, 37, 38, 39};
     private static final int PROGRESS_SLOT = 42;
     public static final int RECIPE_SLOT = 43;
-    private static final ItemStack PROGRESS_ITEM = new CustomItemStack(Material.FLINT_AND_STEEL, "&aProgress");
+    private static final ItemStack PROGRESS_ITEM = new CustomItemStack(Material.FLINT_AND_STEEL, "&a进度");
 
     private static final Map<BlockPosition, Integer> progress = new HashMap<>();
     private static final int PROCESS_TIME_TICKS = 10; // "Number of seconds", except 1 Slimefun "second" = 1.6 IRL seconds
@@ -83,18 +83,18 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
     }
 
     private void buildPreset() {
-        new BlockMenuPreset(this.getId(), "&cSmart Factory") {
+        new BlockMenuPreset(this.getId(), "&c智能工厂") {
             @Override
             public void init() {
                 ChestMenuUtils.drawBackground(this, BORDER);
                 Utils.createBorder(this, ChestMenuUtils.getInputSlotTexture(), BORDER_IN);
                 Utils.createBorder(this, ChestMenuUtils.getOutputSlotTexture(), BORDER_OUT);
                 this.addItem(PROGRESS_SLOT, PROGRESS_ITEM);
-                this.addItem(9, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, "&7Coal Slots",
-                        "&eThis row is reserved for coal for cargo"
+                this.addItem(9, new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, "&7煤炭区",
+                        "&e该行的格子会接收来自货运的煤炭"
                 ));
-                this.addItem(18, new CustomItemStack(Material.YELLOW_STAINED_GLASS_PANE, "&bMisc Slots",
-                        "&eThe remaining rows accept any item", "&eCargo will only complete the stacks"
+                this.addItem(18, new CustomItemStack(Material.YELLOW_STAINED_GLASS_PANE, "&b矿粉区",
+                        "&e剩余的格子会接收来自货运的任何物品", "&e货运仅会补充现有的矿粉"
                 ));
                 this.addMenuClickHandler(RECIPE_SLOT, ChestMenuUtils.getEmptyClickHandler());
             }
@@ -109,8 +109,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
                 SlimefunItem recipe = SlimefunItem.getByItem(menu.getItemInSlot(RECIPE_SLOT));
 
                 if (recipe == null) {
-                    menu.replaceExistingItem(RECIPE_SLOT, new CustomItemStack(Material.BARRIER, "&bRecipe",
-                            "&cSneak and Right Click the", "&cfactory with a supported resource", "&cto set the recipe"
+                    menu.replaceExistingItem(RECIPE_SLOT, new CustomItemStack(Material.BARRIER, "&b配方",
+                            "&e手持物品 Shift+右键点击", "&c智能工厂来设置配方"
                     ));
                 } else {
                     menu.replaceExistingItem(RECIPE_SLOT, getDisplayItem(recipe, getDisplayRecipes()));
@@ -363,8 +363,8 @@ public class SmartFactory extends SlimefunItem implements EnergyNetComponent, Re
 
         List<String> lore = displayMeta.getLore();
         lore.add("");
-        lore.add(Utils.color("&eSneak and Right Click the factory with a"));
-        lore.add(Utils.color("&ecompatible resource to change the recipe"));
+        lore.add(Utils.color("&e手持物品下蹲右键点击"));
+        lore.add(Utils.color("&e智能工厂以设置配方"));
 
         displayMeta.setLore(lore);
         item.setItemMeta(displayMeta);

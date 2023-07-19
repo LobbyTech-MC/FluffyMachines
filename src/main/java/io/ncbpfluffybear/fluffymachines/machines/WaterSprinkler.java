@@ -36,19 +36,19 @@ public class WaterSprinkler extends AbstractGrowthAccelerator {
     private static final int RADIUS = 2;
     private static final int PROGRESS_SLOT = 4;
     private static final CustomItemStack noWaterItem = new CustomItemStack(Material.BUCKET,
-        "&cNo water found",
+        "&c没有找到水源",
         "",
-        "&cPlease place water under the sprinkler!"
+        "&c洒水机下方必须是水源!"
     );
     private static final CustomItemStack waterFoundItem = new CustomItemStack(Material.WATER_BUCKET,
-        "&bWater detected"
+        "&b已找到水源"
     );
     private final ItemSetting<Boolean> particles = new ItemSetting<>(this, "particles", true);
 
     public WaterSprinkler(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
 
-        createPreset(this, "&bWater Sprinkler",
+        createPreset(this, "&b洒水机",
             blockMenuPreset -> {
                 for (int i = 0; i < 9; i++)
                     blockMenuPreset.addItem(i, ChestMenuUtils.getBackground(), ChestMenuUtils.getEmptyClickHandler());

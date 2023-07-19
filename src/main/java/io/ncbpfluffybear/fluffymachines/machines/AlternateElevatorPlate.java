@@ -58,7 +58,7 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
             @Override
             public void onPlayerPlace(@Nonnull BlockPlaceEvent e) {
                 Block b = e.getBlock();
-                BlockStorage.addBlockInfo(b, DATA_KEY, "&fFloor #0");
+                BlockStorage.addBlockInfo(b, DATA_KEY, "&f第一层");
                 BlockStorage.addBlockInfo(b, "owner", e.getPlayer().getUniqueId().toString());
             }
         };
@@ -118,7 +118,7 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
 
     @ParametersAreNonnullByDefault
     private void openFloorSelector(Block b, List<Block> floors, Player p) {
-        ChestMenu elevatorMenu = new ChestMenu("Elevator");
+        ChestMenu elevatorMenu = new ChestMenu("电梯");
         for (int i = 0; i < floors.size(); i++) {
 
             if (i > MAX_CHEST_INDEX) {
@@ -165,9 +165,9 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
 
     @ParametersAreNonnullByDefault
     public void openEditor(Player p, Block b) {
-        ChestMenu menu = new ChestMenu("Elevator Settings");
+        ChestMenu menu = new ChestMenu("电梯设置");
 
-        menu.addItem(4, new CustomItemStack(Material.NAME_TAG, "&7Floor Name &e(Click to edit)", "",
+        menu.addItem(4, new CustomItemStack(Material.NAME_TAG, "&7点击设置楼层名", "",
             "&f" + ChatColors.color(BlockStorage.getLocationInfo(b.getLocation(), DATA_KEY))));
         menu.addMenuClickHandler(4, (pl, slot, item, action) -> {
             pl.closeInventory();

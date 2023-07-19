@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
 
     private static final ItemStack LOCK_ITEM = Utils.buildNonInteractable(
-            Material.DIRT, "&4&lDolly empty", "&cHow did you get in here?"
+            Material.DIRT, "&4&l错误", "&c你要搬到哪里?"
     );
 
     private static final int DELAY = 500; // 500ms
@@ -54,7 +54,7 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
             Player p = e.getPlayer();
 
             if (timeouts.containsKey(p) && timeouts.get(p) + DELAY > System.currentTimeMillis()) {
-                Utils.send(p, "&cPlease wait before using the dolly again!");
+                Utils.send(p, "&c你需要等待一会才能再次使用箱子搬运车!");
                 return;
             }
 
@@ -123,7 +123,7 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
             // Dolly full/empty status determined by lock item in first slot
             // Make sure the dolly is empty
             if (!isLockItem(backpack.getInventory().getItem(0))) {
-                Utils.send(p, "&cThis dolly is already carrying a chest!");
+                Utils.send(p, "&c该箱子搬运车已经拿起了一个箱子!");
                 return;
             }
 
@@ -166,7 +166,7 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
 
             chest.setType(Material.AIR);
 
-            Utils.send(p, "&aYou have picked up this chest");
+            Utils.send(p, "&a你拿起了箱子");
         }
     }
 
@@ -186,13 +186,13 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
             final ItemStack[][] bpContents = {backpack.getInventory().getContents()};
 
             if (isLockItem(bpContents[0][0])) {
-                Utils.send(p, "&cYou must pick up a chest first!");
+                Utils.send(p, "&c你必须拿起一个箱子!");
                 return;
             }
 
             boolean singleChest = isLockItem(bpContents[0][27]);
             if (!canChestFit(chestBlock, p, singleChest)) {
-                Utils.send(p, "&cYou can't fit your chest there!");
+                Utils.send(p, "&c该箱子无法放置于此处!");
                 return;
             }
 
@@ -210,7 +210,7 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
 
                     ((InventoryHolder) chestBlock.getState()).getInventory().setStorageContents(bpContents[0]);
                     dolly.setType(Material.MINECART);
-                    Utils.send(p, "&aChest has been placed");
+                    Utils.send(p, "&a已放置箱子");
                 }
             });
         });

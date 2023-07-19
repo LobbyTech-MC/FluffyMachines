@@ -162,7 +162,7 @@ public class WateringCan extends SimpleSlimefunItem<ItemUseHandler> implements C
 
                         if (BlockStorage.hasBlockInfo(b)) {
                             if (exoticGardenSuccessChance.getValue() == 0) {
-                                Utils.send(p, "&cYou can not water Exotic Garden plants!");
+                                Utils.send(p, "&c你无法浇灌异域花园植物!");
                                 return;
                             }
                             if (random < exoticGardenSuccessChance.getValue()) {
@@ -204,7 +204,7 @@ public class WateringCan extends SimpleSlimefunItem<ItemUseHandler> implements C
         if (updateType == 1) {
 
             if (usesLeft == 0) {
-                Utils.send(p, "&cYou need to refill your Watering Can!");
+                Utils.send(p, "&c你需要给你的喷壶加满水!");
                 return false;
             }
             p.playSound(p.getLocation(), Sound.ENTITY_DROWNED_AMBIENT_WATER, 0.5F, 1F);
@@ -212,21 +212,21 @@ public class WateringCan extends SimpleSlimefunItem<ItemUseHandler> implements C
 
         } else if (updateType == 2) {
             p.playSound(p.getLocation(), Sound.ENTITY_DROWNED_DEATH_WATER, 0.5F, 1F);
-            Utils.send(p, "&aYou have filled your Watering Can");
+            Utils.send(p, "&a你已经装满了你的喷壶");
             usesLeft = can.getUses().getValue();
 
         } else if (updateType == 3) {
             if (usesLeft == 0) {
-                Utils.send(p, "&cYou need to refill your Watering Can!");
+                Utils.send(p, "&c你需要给你的喷壶加满水!");
                 return false;
             }
             usesLeft = 0;
             p.playSound(p.getLocation(), Sound.ITEM_BUCKET_EMPTY, 0.5F, 1F);
         } else {
-            p.sendMessage("Error");
+            p.sendMessage("系统发生了错误");
         }
 
-        lore.set(USE_INDEX, ChatColors.color("&aUses Left: &e" + usesLeft));
+        lore.set(USE_INDEX, ChatColors.color("&a剩余水量: &e" + usesLeft));
         meta.setLore(lore);
         meta.getPersistentDataContainer().set(usageKey, PersistentDataType.INTEGER, usesLeft);
         item.setItemMeta(meta);

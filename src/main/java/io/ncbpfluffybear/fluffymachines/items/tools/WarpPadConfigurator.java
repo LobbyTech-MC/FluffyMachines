@@ -79,14 +79,14 @@ public class WarpPadConfigurator extends SlimefunItem implements HologramOwner, 
                         pdc.set(yCoord, PersistentDataType.INTEGER, b.getY());
                         pdc.set(zCoord, PersistentDataType.INTEGER, b.getZ());
                         lore.set(LORE_COORDINATE_INDEX, ChatColor.translateAlternateColorCodes(
-                            '&', "&eLinked Coordinates: &7" + b.getX() + ", " + b.getY() + ", " + b.getZ()));
+                            '&', "&e连接点坐标: &7" + b.getX() + ", " + b.getY() + ", " + b.getZ()));
 
                         meta.setLore(lore);
                         item.setItemMeta(meta);
 
-                        updateHologram(b, "&a&lDestination");
+                        updateHologram(b, "&a&l终点");
                         BlockStorage.addBlockInfo(b, "type", "destination");
-                        Utils.send(p, "&3This pad has been marked as a &aDestination &3and bound to your configurator");
+                        Utils.send(p, "&3此传送装置已标记为&a终点&3。已记录该传送装置的坐标。");
 
                     // Origin
                     } else if (pdc.has(world, PersistentDataType.STRING) && b.getWorld().getName().equals(
@@ -98,27 +98,27 @@ public class WarpPadConfigurator extends SlimefunItem implements HologramOwner, 
                         if (Math.abs(x - b.getX()) > MAX_DISTANCE.getValue()
                             || Math.abs(z - b.getZ()) > MAX_DISTANCE.getValue()) {
 
-                            Utils.send(p, "&cYou can not link blocks more than "
-                                + MAX_DISTANCE.getValue() + " blocks apart!");
+                            Utils.send(p, "&c传送装置之间的直线距离不能超过"
+                                    + MAX_DISTANCE.getValue() + "个方块！");
 
                             return;
                         }
 
                         registerOrigin(b, x, y, z);
 
-                        Utils.send(p, "&3This pad has been marked as an &aOrigin &3and your configurator's settings " +
-                            "have been pasted onto this pad");
+                        Utils.send(p, "&3此传送装置已标记为 &a起点" +
+                            "&3并设置了终点装置的坐标！");
 
                     } else {
 
-                        Utils.send(p, "&cSneak and right click on a Warp Pad to set the destination, then right click" +
-                            " " + "another Warp Pad tp set the origin!");
+                        Utils.send(p, "&c蹲下 + 右键点击传送装置设置终点," +
+                            " " + "右键点击另一个传送装置设置起点!");
                     }
 
                 }
 
             } else {
-                Utils.send(p, "&cConfigure this Warp Pad using a Warp Pad Configurator");
+                Utils.send(p, "&c使用传送装置配置器来配置传送装置");
             }
         }
     }

@@ -154,7 +154,7 @@ public class EnderChestExtractionNode extends SlimefunItem {
                 if (!e.isCancelled()) {
                     BlockStorage.addBlockInfo(b, "owner", p.getUniqueId().toString());
                     BlockStorage.addBlockInfo(b, "playername", p.getDisplayName());
-                    Utils.send(p, "&aEnder Chest Extraction Node registered to " + p.getDisplayName()
+                    Utils.send(p, "&a末地货运节点已绑定到ID为 " + p.getDisplayName()
                         + " &7(UUID: " + p.getUniqueId() + ")");
                 }
             }
@@ -165,7 +165,7 @@ public class EnderChestExtractionNode extends SlimefunItem {
         return e -> {
             Player p = e.getPlayer();
             Block b = e.getClickedBlock().get();
-            Utils.send(p, "&eThis Ender Chest Extraction Node belongs to " +
+            Utils.send(p, "&e此末地货运节点是属于ID为 " +
                 BlockStorage.getLocationInfo(b.getLocation(), "playername")
                 + " &7(UUID: " + BlockStorage.getLocationInfo(b.getLocation(), "owner") + ")");
         };

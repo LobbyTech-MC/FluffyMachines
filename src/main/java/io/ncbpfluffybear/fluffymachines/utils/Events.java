@@ -61,8 +61,8 @@ public class Events implements Listener {
             e.setCancelled(true);
             Entity target = e.getRightClicked();
             if (target instanceof Player && WateringCan.updateUses(wateringCan, p, item, 3)) {
-                Utils.send(p, "&bSplash!");
-                Utils.send((Player) target, "&bYou were splashed by " + p.getDisplayName() + "!");
+                Utils.send(p, "&b喷水!");
+                Utils.send((Player) target, "&b你被水溅到了" + p.getDisplayName() + "!");
                 ((Player) target).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 1));
             }
         }
@@ -149,7 +149,7 @@ public class Events implements Listener {
                     p.spawnParticle(Particle.DRAGON_BREATH, p.getLocation(), 10);
 
                 } else {
-                    Utils.send(p, "&cMissing destination Warp Pad!");
+                    Utils.send(p, "&c缺少传送装置!");
 
                 }
             }
@@ -173,7 +173,7 @@ public class Events implements Listener {
     public void onExtractionNodePlace(BlockPlaceEvent e) {
         if ((e.getBlock().getY() != e.getBlockAgainst().getY() || e.getBlockAgainst().getType() != Material.ENDER_CHEST)
                 && isExtractionNode(e.getItemInHand())) {
-            Utils.send(e.getPlayer(), "&cYou can only place this on an Ender Chest!");
+            Utils.send(e.getPlayer(), "&c你只能把这个放在末影箱旁边!");
             e.setCancelled(true);
         }
     }

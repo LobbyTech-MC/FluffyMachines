@@ -74,8 +74,8 @@ public class AutoCrafter extends SlimefunItem implements EnergyNetComponent {
                 if (!BlockStorage.hasBlockInfo(b)
                         || BlockStorage.getLocationInfo(b.getLocation(), "enabled") == null
                         || BlockStorage.getLocationInfo(b.getLocation(), "enabled").equals(String.valueOf(false))) {
-                    menu.replaceExistingItem(6, new CustomItemStack(Material.GUNPOWDER, "&7Enabled: &4\u2718", "",
-                            "&e> Click to enable this Machine")
+                    menu.replaceExistingItem(6, new CustomItemStack(Material.GUNPOWDER, "&7启用状态: &4\u2718", "",
+                            "&e> 点击启用")
                     );
                     menu.addMenuClickHandler(6, (p, slot, item, action) -> {
                         BlockStorage.addBlockInfo(b, "enabled", String.valueOf(true));
@@ -83,8 +83,8 @@ public class AutoCrafter extends SlimefunItem implements EnergyNetComponent {
                         return false;
                     });
                 } else {
-                    menu.replaceExistingItem(6, new CustomItemStack(Material.REDSTONE, "&7Enabled: &2\u2714",
-                            "", "&e> Click to disable this Machine")
+                    menu.replaceExistingItem(6, new CustomItemStack(Material.REDSTONE, "&7启用状态: &2\u2714",
+                            "", "&e> 点击禁用")
                     );
                     menu.addMenuClickHandler(6, (p, slot, item, action) -> {
                         BlockStorage.addBlockInfo(b, "enabled", String.valueOf(false));
@@ -191,8 +191,8 @@ public class AutoCrafter extends SlimefunItem implements EnergyNetComponent {
             });
         }
 
-        preset.addItem(2, new CustomItemStack(new ItemStack(material), "&eRecipe",
-                "", "&bPut in the Recipe you want to craft", machineName + " Recipes ONLY"
+        preset.addItem(2, new CustomItemStack(new ItemStack(material), "&e使用方法",
+                "", "&b把将要制作的物品配方放入里面", "&4仅支持" + machineName + "&4的配方"
             ),
             (p, slot, item, action) -> false);
     }

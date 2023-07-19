@@ -1,17 +1,18 @@
 package io.ncbpfluffybear.fluffymachines.objects;
 
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
+
 import io.github.thebusybiscuit.slimefun4.core.attributes.ItemAttribute;
 import io.github.thebusybiscuit.slimefun4.core.services.holograms.HologramsService;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.blocks.HologramProjector;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.common.ChatColors;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.util.Vector;
 
 /**
  * This {@link ItemAttribute} manages holograms.

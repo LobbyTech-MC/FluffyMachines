@@ -1,15 +1,5 @@
 package io.ncbpfluffybear.fluffymachines.multiblocks;
 
-import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
-import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
-import io.ncbpfluffybear.fluffymachines.multiblocks.components.SuperheatedFurnace;
-import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
-import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import java.util.Objects;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -18,6 +8,16 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import io.ncbpfluffybear.fluffymachines.multiblocks.components.SuperheatedFurnace;
+import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
+import io.ncbpfluffybear.fluffymachines.utils.Utils;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 
 /**
  * The shell of the {@link SuperheatedFurnace}
@@ -43,7 +43,7 @@ public class Foundry extends MultiBlockMachine {
 
         if (BlockStorage.getLocationInfo(b.getLocation(), "accessible") == null) {
             BlockStorage.addBlockInfo(b, "accessible", "true");
-            Utils.send(p, "&eFoundry has been registered. Right click the furnace with a lava bucket to heat.");
+            Utils.send(p, "&e铸造厂已注册，接下来请手持岩浆桶并右键点击超热炉以加热。");
         } else if (BlockStorage.getLocationInfo(b.getLocation(), "ignited") == null) {
             if (p.getInventory().getItemInMainHand().getType() == Material.LAVA_BUCKET) {
 
@@ -64,7 +64,7 @@ public class Foundry extends MultiBlockMachine {
                 BlockStorage.addBlockInfo(b, "stand", String.valueOf(lavaStand.getUniqueId()));
                 BlockStorage.addBlockInfo(b, "ignited", "true");
             } else {
-                Utils.send(p, "&cThis foundry still needs to be filled with lava!");
+                Utils.send(p, "&cT这个铸造厂需要岩浆进行激活!");
             }
         } else if (BlockStorage.getLocationInfo(b.getLocation(), "ignited") != null) {
             // Reheat furnace (Cosmetic)
