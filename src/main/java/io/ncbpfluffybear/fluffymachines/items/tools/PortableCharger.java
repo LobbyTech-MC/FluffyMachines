@@ -200,7 +200,6 @@ public class PortableCharger extends SimpleSlimefunItem<ItemUseHandler> implemen
     }
 
     @Getter
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public enum Type {
 
         SMALL(128, 8),
