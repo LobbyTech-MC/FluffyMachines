@@ -29,6 +29,7 @@ public final class Constants {
 
     public static final int MAX_STACK_SIZE = 64;
 
-    private Constants() {}
+    private Constants() {
+    }
 
 }

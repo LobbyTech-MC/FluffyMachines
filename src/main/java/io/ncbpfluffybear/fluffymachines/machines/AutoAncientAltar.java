@@ -1,5 +1,7 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.events.BlockPlacerPlaceEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -19,17 +21,9 @@ import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.ncbpfluffybear.fluffymachines.utils.Constants;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu.AdvancedMenuClickHandler;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
@@ -42,6 +36,13 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This {@link SlimefunItem} automatically crafts
@@ -77,25 +78,24 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
 
             @Override
             public void newInstance(@Nonnull BlockMenu menu, @Nonnull Block b) {
-                BlockStorage.addBlockInfo(b, "craftOnce", String.valueOf(false));
+                SlimefunBlockData blockData = StorageCacheUtils.getBlock(b.getLocation());
+                blockData.setData("craftOnce", String.valueOf(false));
 
-                if (!BlockStorage.hasBlockInfo(b)
-                        || BlockStorage.getLocationInfo(b.getLocation(), "enabled") == null
-                        || BlockStorage.getLocationInfo(b.getLocation(), "enabled").equals(String.valueOf(false))) {
-                    menu.replaceExistingItem(6, new CustomItemStack(Material.GUNPOWDER, "&7启用状态: &4\u2718", "",
+                if (blockData.getData("enabled") == null || String.valueOf(false).equals(blockData.getData("enabled"))) {
+                    menu.replaceExistingItem(6, new CustomItemStack(Material.GUNPOWDER, "&7启用: &4\u2718", "",
                             "&e> 点击启用")
                     );
                     menu.addMenuClickHandler(6, (p, slot, item, action) -> {
-                        BlockStorage.addBlockInfo(b, "enabled", String.valueOf(true));
+                        blockData.setData("enabled", String.valueOf(true));
                         newInstance(menu, b);
                         return false;
                     });
                 } else {
-                    menu.replaceExistingItem(6, new CustomItemStack(Material.REDSTONE, "&7启用状态: &2\u2714",
+                    menu.replaceExistingItem(6, new CustomItemStack(Material.REDSTONE, "&7启用: &2\u2714",
                             "", "&e> 点击禁用")
                     );
                     menu.addMenuClickHandler(6, (p, slot, item, action) -> {
-                        BlockStorage.addBlockInfo(b, "enabled", String.valueOf(false));
+                        blockData.setData("enabled", String.valueOf(false));
                         newInstance(menu, b);
                         return false;
                     });
@@ -105,7 +105,7 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
                         "", "&e> 单击制作一次")
                 );
                 menu.addMenuClickHandler(7, (p, slot, item, action) -> {
-                    BlockStorage.addBlockInfo(b, "craftOnce", String.valueOf(true));
+                    blockData.setData("craftOnce", String.valueOf(true));
                     return false;
                 });
             }
@@ -162,7 +162,7 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
             @Override
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
                 Block b = e.getBlock();
-                BlockMenu inv = BlockStorage.getInventory(b);
+                BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
 
                 if (inv != null) {
                     inv.dropItems(b.getLocation(), getInputSlots());
@@ -177,14 +177,14 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
 
             @Override
             public void onPlayerPlace(@Nonnull BlockPlaceEvent e) {
-                BlockStorage.addBlockInfo(e.getBlock(), "enabled", String.valueOf(false));
-                BlockStorage.addBlockInfo(e.getBlock(), "craftOnce", String.valueOf(false));
+                StorageCacheUtils.setData(e.getBlock().getLocation(), "enabled", String.valueOf(false));
+                StorageCacheUtils.setData(e.getBlock().getLocation(), "craftOnce", String.valueOf(false));
             }
 
             @Override
             public void onBlockPlacerPlace(@Nonnull BlockPlacerPlaceEvent e) {
-                BlockStorage.addBlockInfo(e.getBlock(), "enabled", String.valueOf(false));
-                BlockStorage.addBlockInfo(e.getBlock(), "craftOnce", String.valueOf(false));
+                StorageCacheUtils.setData(e.getBlock().getLocation(), "enabled", String.valueOf(false));
+                StorageCacheUtils.setData(e.getBlock().getLocation(), "craftOnce", String.valueOf(false));
             }
         };
     }
@@ -247,7 +247,7 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
         addItemHandler(new BlockTicker() {
 
             @Override
-            public void tick(Block b, SlimefunItem sf, Config data) {
+            public void tick(Block b, SlimefunItem sf, SlimefunBlockData data) {
                 AutoAncientAltar.this.tick(b);
             }
 
@@ -259,9 +259,9 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
     }
 
     protected void tick(Block block) {
-        String craftOnce = BlockStorage.getLocationInfo(block.getLocation(), "craftOnce");
-        if (BlockStorage.getLocationInfo(block.getLocation(), "enabled").equals(String.valueOf(false))
-                && craftOnce.equals("false")) {
+        SlimefunBlockData blockData = StorageCacheUtils.getBlock(block.getLocation());
+        String craftOnce = blockData.getData("craftOnce");
+        if (String.valueOf(false).equals(blockData.getData("enabled")) && craftOnce.equals("false")) {
             return;
         }
 
@@ -269,12 +269,12 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
             return;
         }
 
-        BlockStorage.addBlockInfo(block, "craftOnce", String.valueOf(false));
+        blockData.setData("craftOnce", String.valueOf(false));
         craftIfValid(block, Boolean.parseBoolean(craftOnce));
     }
 
     private void craftIfValid(Block block, boolean craftOnce) {
-        BlockMenu menu = BlockStorage.getInventory(block);
+        BlockMenu menu = StorageCacheUtils.getMenu(block.getLocation());
         List<ItemStack> pedestalItems = new ArrayList<>();
 
         // Make sure at least 1 slot is free
@@ -331,8 +331,8 @@ public class AutoAncientAltar extends SlimefunItem implements EnergyNetComponent
 
             try {
                 EntityType entityType = EntityType.valueOf(sfCatalyst.getId()
-                        .replace("FILLED_", "")
-                        .replace("_SOUL_JAR", "")
+                    .replace("FILLED_", "")
+                    .replace("_SOUL_JAR", "")
                 );
 
                 if (entityType == EntityType.UNKNOWN) {

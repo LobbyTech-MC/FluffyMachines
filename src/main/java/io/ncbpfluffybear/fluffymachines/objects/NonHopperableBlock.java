@@ -5,11 +5,11 @@
 
 package io.ncbpfluffybear.fluffymachines.objects;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -23,8 +23,7 @@ public class NonHopperableBlock extends SlimefunItem {
     @EventHandler
     public void onHopper(InventoryMoveItemEvent e) {
         if (e.getSource().getType() == InventoryType.HOPPER && e.getDestination().getLocation() != null
-                && BlockStorage.hasBlockInfo(e.getDestination().getLocation())
-                && BlockStorage.check(e.getDestination().getLocation()) instanceof NonHopperableBlock
+            && StorageCacheUtils.getSfItem(e.getDestination().getLocation()) instanceof NonHopperableBlock
         ) {
             e.setCancelled(true);
         }

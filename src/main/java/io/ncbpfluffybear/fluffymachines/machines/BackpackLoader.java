@@ -1,24 +1,24 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.SlimefunBackpack;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -93,7 +93,7 @@ public class BackpackLoader extends SlimefunItem implements EnergyNetComponent {
             @Override
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
                 Block b = e.getBlock();
-                BlockMenu inv = BlockStorage.getInventory(b);
+                BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
 
                 if (inv != null) {
                     inv.dropItems(b.getLocation(), getInputSlots());
@@ -107,7 +107,7 @@ public class BackpackLoader extends SlimefunItem implements EnergyNetComponent {
     @Override
     public void preRegister() {
         this.addItemHandler(new BlockTicker() {
-            public void tick(Block b, SlimefunItem sf, Config data) {
+            public void tick(Block b, SlimefunItem sf, SlimefunBlockData data) {
                 BackpackLoader.this.tick(b);
             }
 
@@ -123,7 +123,7 @@ public class BackpackLoader extends SlimefunItem implements EnergyNetComponent {
             return;
         }
 
-        final BlockMenu inv = BlockStorage.getInventory(b);
+        final BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
         boolean invalidItem = false;
 
         // If no backpack in backpack slot, search for one and if found move to BACKPACK_SLOT
@@ -173,7 +173,7 @@ public class BackpackLoader extends SlimefunItem implements EnergyNetComponent {
             ItemStack transferItem = inv.getItemInSlot(occupiedInputSlot);
 
             int finalOccupiedInputSlot = occupiedInputSlot;
-            PlayerProfile.getBackpack(bpItem, backpack -> {
+            PlayerBackpack.getAsync(bpItem, backpack -> {
 
                 Inventory bpinv = backpack.getInventory();
 
@@ -195,7 +195,7 @@ public class BackpackLoader extends SlimefunItem implements EnergyNetComponent {
 
                     removeCharge(b.getLocation(), ENERGY_CONSUMPTION);
                 }
-            });
+            }, false);
         }
     }
 

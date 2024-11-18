@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -83,7 +84,7 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements 
             block.getLocation(), Interaction.BREAK_BLOCK)
         ) {
             e.setCancelled(true);
-            SlimefunItem slimefunBlock = BlockStorage.check(block);
+            SlimefunItem slimefunBlock = StorageCacheUtils.getSfItem(block.getLocation());
 
             // Check if slimefunBlock is not a machine or a cargo component
             if (slimefunBlock == null
@@ -108,7 +109,7 @@ public class FluffyWrench extends SimpleSlimefunItem<ItemUseHandler> implements 
         BlockBreakEvent breakEvent = new BlockBreakEvent(block, p);
         Bukkit.getPluginManager().callEvent(breakEvent);
         if (!breakEvent.isCancelled()) {
-            BlockStorage.clearBlockInfo(block);
+            Slimefun.getDatabaseManager().getBlockDataController().removeBlock(block.getLocation());
             block.setType(Material.AIR);
         }
     }

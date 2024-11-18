@@ -1,5 +1,6 @@
 package io.ncbpfluffybear.fluffymachines.items.tools;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.items.SimpleSlimefunItem;
 import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
@@ -8,7 +9,6 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class ACBUpgradeCard extends SimpleSlimefunItem<ItemHandler> {
             e.cancel();
 
             Block b = optB.get();
-            SlimefunItem sfItem = BlockStorage.check(b);
+            SlimefunItem sfItem = StorageCacheUtils.getSfItem(b.getLocation());
             Player p = e.getPlayer();
             ItemStack card = p.getInventory().getItemInMainHand();
 
@@ -55,13 +55,13 @@ public class ACBUpgradeCard extends SimpleSlimefunItem<ItemHandler> {
             }
 
             // Increment the tier by 1
-            int tier = Integer.parseInt(BlockStorage.getLocationInfo(b.getLocation(), "tier"));
+            int tier = Integer.parseInt(StorageCacheUtils.getData(b.getLocation(), "tier"));
             if (tier == 100) {
                 Utils.send(e.getPlayer(), "&c该高级充电台已达到最高等级(100)");
                 return;
             }
             tier++;
-            BlockStorage.addBlockInfo(b.getLocation(), "tier", String.valueOf(tier));
+            StorageCacheUtils.setData(b.getLocation(), "tier", String.valueOf(tier));
 
             // Remove a card
             card.setAmount(card.getAmount() - 1);

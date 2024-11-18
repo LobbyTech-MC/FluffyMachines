@@ -1,5 +1,6 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
@@ -9,7 +10,6 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
 import io.ncbpfluffybear.fluffymachines.objects.NonHopperableBlock;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -43,8 +43,8 @@ public class WarpPad extends NonHopperableBlock implements HologramOwner {
         return new BlockPlaceHandler(true) {
             @Override
             public void onPlayerPlace(@Nonnull BlockPlaceEvent e) {
-                BlockStorage.addBlockInfo(e.getBlockPlaced(), "type", "none");
-                updateHologram(e.getBlockPlaced(), "&4&lX");
+                StorageCacheUtils.setData(e.getBlockPlaced().getLocation(), "type", "none");
+                updateHologram(e.getBlockPlaced(), "&4&l无");
             }
         };
     }

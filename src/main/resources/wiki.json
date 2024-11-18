@@ -1,0 +1,10 @@
+{
+  "GENERATOR_CORE": "multiblock/crank-generator",
+  "CRANK_GENERATOR": "multiblock/crank-generator",
+  "FOUNDRY": "multiblock/foundry",
+  "SUPERHEATED_FURNACE": "multiblock/foundry",
+  "AUTO_CRAFTING_TABLE": "machines/auto-crafting-table",
+  "ADVANCED_CHARGING_BENCH": "machines/advanced-charging-bench",
+  "ACB_UPGRADE_CARD": "machines/advanced-charging-bench",
+  "SMART_FACTORY": "machines/smart-factory"
+}

@@ -1,5 +1,6 @@
 package io.ncbpfluffybear.fluffymachines.items;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
@@ -10,7 +11,6 @@ import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
 import javax.annotation.Nonnull;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -29,7 +29,7 @@ public class MiniBarrel extends Barrel {
         return new BlockPlaceHandler(false) {
             @Override
             public void onPlayerPlace(@Nonnull BlockPlaceEvent e) {
-                BlockStorage.addBlockInfo(e.getBlock(), "max-size", String.valueOf(barrelCapacity.getValue()));
+                StorageCacheUtils.setData(e.getBlock().getLocation(), "max-size", String.valueOf(barrelCapacity.getValue()));
             }
         };
     }
@@ -49,7 +49,7 @@ public class MiniBarrel extends Barrel {
                 int renameSize = NumberUtils.getInt(cleanMsg, 0);
 
                 if (renameSize == 0 || renameSize > barrelCapacity.getValue()) {
-                    Utils.send(p, "&c箱子容量必须为: 0 至 " + barrelCapacity.getValue());
+                    Utils.send(p, "&c箱子容量必须为: 1 至 " + barrelCapacity.getValue());
                     return;
                 }
 
@@ -58,10 +58,10 @@ public class MiniBarrel extends Barrel {
                     return;
                 }
 
-                BlockStorage.addBlockInfo(b, "max-size", String.valueOf(renameSize));
+               StorageCacheUtils.setData(b.getLocation(), "max-size", String.valueOf(renameSize));
                 menu.replaceExistingItem(13, new CustomItemStack(Material.YELLOW_STAINED_GLASS_PANE,
-                        "&e更改容量", "&7> 点击更改容量", "&e当前容量: " + renameSize,
-                        "&e最大限制: " + barrelCapacity.getValue()
+                    "&e更改容量", "&7> 点击更改容量", "&e当前容量: " + renameSize,
+                    "&e最大限制: " + barrelCapacity.getValue()
                 ));
                 Utils.send(p, "&a已更改容量为: " + renameSize);
                 updateMenu(b, menu, true, renameSize);
@@ -72,9 +72,9 @@ public class MiniBarrel extends Barrel {
 
     @Override
     public int getCapacity(Block b) {
-        String capacity = BlockStorage.getLocationInfo(b.getLocation(), "max-size");
+        String capacity = StorageCacheUtils.getData(b.getLocation(), "max-size");
         if (capacity == null) {
-            BlockStorage.addBlockInfo(b, "max-size", String.valueOf(barrelCapacity.getValue()));
+            StorageCacheUtils.setData(b.getLocation(), "max-size", String.valueOf(barrelCapacity.getValue()));
             return barrelCapacity.getValue();
         }
         return Integer.parseInt(capacity);

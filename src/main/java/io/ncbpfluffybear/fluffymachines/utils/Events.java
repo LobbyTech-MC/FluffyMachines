@@ -1,13 +1,16 @@
 package io.ncbpfluffybear.fluffymachines.utils;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.callback.IAsyncReadCallback;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.BlockDataController;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.ncbpfluffybear.fluffymachines.items.Barrel;
 import io.ncbpfluffybear.fluffymachines.items.FireproofRune;
 import io.ncbpfluffybear.fluffymachines.items.HelicopterHat;
 import io.ncbpfluffybear.fluffymachines.items.tools.WateringCan;
 import io.ncbpfluffybear.fluffymachines.machines.AlternateElevatorPlate;
-import javax.annotation.Nonnull;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -33,6 +36,8 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import javax.annotation.Nonnull;
 
 public class Events implements Listener {
 
@@ -71,7 +76,7 @@ public class Events implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDamage(EntityDamageEvent e) {
         if (e.getEntity() instanceof Player && ((Player) e.getEntity()).getEquipment() != null
-                && e.getCause() == EntityDamageEvent.DamageCause.FALL
+            && e.getCause() == EntityDamageEvent.DamageCause.FALL
         ) {
             Player p = (Player) e.getEntity();
             ItemStack helmet = p.getEquipment().getHelmet();
@@ -87,7 +92,7 @@ public class Events implements Listener {
     public void onNonClickableClick(InventoryClickEvent e) {
         ItemStack item = e.getCurrentItem();
         if (item != null && item.getType() != Material.AIR && (item.getItemMeta().hasCustomModelData()
-                && item.getItemMeta().getCustomModelData() == 6969) || Utils.checkNonInteractable(item)) {
+            && item.getItemMeta().getCustomModelData() == 6969) || Utils.checkNonInteractable(item)) {
             e.setCancelled(true);
         }
     }
@@ -95,7 +100,7 @@ public class Events implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onHeadRemove(PlayerArmorStandManipulateEvent e) {
         if (e.getRightClicked().getCustomName() != null
-                && e.getRightClicked().getCustomName().equals("hehexdfluff"))
+            && e.getRightClicked().getCustomName().equals("hehexdfluff"))
             e.setCancelled(true);
     }
 
@@ -105,11 +110,11 @@ public class Events implements Listener {
         if (en instanceof Item) {
             ItemStack item = ((Item) en).getItemStack();
             if (FireproofRune.isFireproof(item)
-                    && (e.getCause() == EntityDamageEvent.DamageCause.FIRE
-                    || e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK
-                    || e.getCause() == EntityDamageEvent.DamageCause.LAVA
-                    || e.getCause() == EntityDamageEvent.DamageCause.LIGHTNING)
-                    && !en.isDead()
+                && (e.getCause() == EntityDamageEvent.DamageCause.FIRE
+                || e.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK
+                || e.getCause() == EntityDamageEvent.DamageCause.LAVA
+                || e.getCause() == EntityDamageEvent.DamageCause.LIGHTNING)
+                && !en.isDead()
             ) {
                 en.remove();
                 en.getLocation().getWorld().dropItem(en.getLocation(), item);
@@ -124,35 +129,91 @@ public class Events implements Listener {
             Player p = e.getPlayer();
             Block b = p.getLocation().subtract(0, 1, 0).getBlock();
 
-            if (BlockStorage.hasBlockInfo(b) && BlockStorage.check(b) == FluffyItems.WARP_PAD.getItem()
-                    && BlockStorage.getLocationInfo(b.getLocation(), "type").equals("origin")) {
+            SlimefunBlockData blockData = StorageCacheUtils.getBlock(b.getLocation());
+            if (blockData != null && blockData.getSfId().equals(FluffyItems.WARP_PAD.getItem().getId())) {
+                StorageCacheUtils.executeAfterLoad(blockData, () -> {
+                    if (!blockData.getData("type").equals("origin")) {
+                        return;
+                    }
 
-                Location l = b.getLocation();
-                Location destination = new Location(b.getWorld(),
-                        Integer.parseInt(BlockStorage.getLocationInfo(l, "x")),
-                        Integer.parseInt(BlockStorage.getLocationInfo(l, "y")),
-                        Integer.parseInt(BlockStorage.getLocationInfo(l, "z")));
+                    Location l = b.getLocation();
+                    Location destination = new Location(b.getWorld(),
+                        Integer.parseInt(blockData.getData("x")),
+                        Integer.parseInt(blockData.getData("y")),
+                        Integer.parseInt(blockData.getData("z")));
 
-                float yaw = p.getLocation().getYaw();
-                float pitch = p.getLocation().getPitch();
+                    float yaw = p.getLocation().getYaw();
+                    float pitch = p.getLocation().getPitch();
 
-                if (BlockStorage.hasBlockInfo(destination) && BlockStorage.getLocationInfo(destination, "type") != null
-                        && BlockStorage.getLocationInfo(destination, "type").equals("destination")
-                        && destination.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR
-                        && destination.getBlock().getRelative(BlockFace.UP, 2).getType() == Material.AIR) {
+                    SlimefunBlockData destData = StorageCacheUtils.getBlock(destination);
+                    if (destData != null
+                        && destination.getBlock().getRelative(BlockFace.UP).getType().isAir()
+                        && destination.getBlock().getRelative(BlockFace.UP, 2).getType().isAir()) {
 
-                    destination.setPitch(pitch);
-                    destination.setYaw(yaw);
-                    p.teleport(destination.add(0.5, 1, 0.5));
+                        StorageCacheUtils.executeAfterLoad(destData, () -> {
+                            if (!destData.getData("type").equals("destination")) {
+                                return;
+                            }
+                            destination.setPitch(pitch);
+                            destination.setYaw(yaw);
 
-                    p.playSound(p.getLocation(), Sound.ITEM_CHORUS_FRUIT_TELEPORT, 0.5F, 0.5F);
-                    p.spawnParticle(Particle.DRAGON_BREATH, p.getLocation(), 10);
+                            Utils.runSync(() -> {
+                                p.teleport(destination.add(0.5, 1, 0.5));
 
-                } else {
-                    Utils.send(p, "&c缺少传送装置!");
-
-                }
+                                p.playSound(p.getLocation(), Sound.ITEM_CHORUS_FRUIT_TELEPORT, 0.5F, 0.5F);
+                                p.spawnParticle(Particle.DRAGON_BREATH, p.getLocation(), 10);
+                            }, 1);
+                        }, false);
+                    } else {
+                        Utils.send(p, "&c缺少传送装置!");
+                    }
+                }, false);
             }
+        }
+    }
+
+    private void warp(SlimefunBlockData blockData, Block b, Player p) {
+        if (blockData.getData("type").equals("origin")) {
+            Location destination = new Location(b.getWorld(),
+                    Integer.parseInt(blockData.getData("x")),
+                    Integer.parseInt(blockData.getData("y")),
+                    Integer.parseInt(blockData.getData("z")));
+
+            float yaw = p.getLocation().getYaw();
+            float pitch = p.getLocation().getPitch();
+
+            BlockDataController controller = Slimefun.getDatabaseManager().getBlockDataController();
+            controller.getBlockDataAsync(
+                    destination,
+                    new IAsyncReadCallback<SlimefunBlockData>() {
+                        @Override
+                        public void onResult(SlimefunBlockData result) {
+                            if (!result.isDataLoaded()) {
+                                controller.loadBlockData(result);
+                            }
+                            if (!result.getData("type").equals("destination")
+                                    || destination.getBlock().getRelative(BlockFace.UP).getType() == Material.AIR
+                                    || destination.getBlock().getRelative(BlockFace.UP, 2).getType() == Material.AIR
+                            ) {
+                                Utils.send(p, "&c缺少传送装置!");
+                                return;
+                            }
+
+                            destination.setPitch(pitch);
+                            destination.setYaw(yaw);
+                            Slimefun.runSync(() ->{
+                                p.teleport(destination.add(0.5, 1, 0.5));
+                                p.playSound(p.getLocation(), Sound.ITEM_CHORUS_FRUIT_TELEPORT, 0.5F, 0.5F);
+                                p.spawnParticle(Particle.DRAGON_BREATH, p.getLocation(), 10);
+                            });
+                        }
+
+                        @Override
+                        public void onResultNotFound() {
+                            Utils.send(p, "&c缺少传送装置!");
+                        }
+                    }
+            );
         }
     }
 
@@ -162,8 +223,8 @@ public class Events implements Listener {
             return;
         }
 
-        String id = BlockStorage.checkID(e.getClickedBlock());
-        if (id != null && id.equals(FluffyItems.ALTERNATE_ELEVATOR_PLATE.getItemId())) {
+        SlimefunItem item = StorageCacheUtils.getSfItem(e.getClickedBlock().getLocation());
+        if (item != null && item.getId().equals(FluffyItems.ALTERNATE_ELEVATOR_PLATE.getItemId())) {
             AlternateElevatorPlate elevator = ((AlternateElevatorPlate) FluffyItems.ALTERNATE_ELEVATOR_PLATE.getItem());
             elevator.openInterface(e.getPlayer(), e.getClickedBlock());
         }
@@ -172,7 +233,7 @@ public class Events implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onExtractionNodePlace(BlockPlaceEvent e) {
         if ((e.getBlock().getY() != e.getBlockAgainst().getY() || e.getBlockAgainst().getType() != Material.ENDER_CHEST)
-                && isExtractionNode(e.getItemInHand())) {
+            && isExtractionNode(e.getItemInHand())) {
             Utils.send(e.getPlayer(), "&c你只能把这个放在末影箱旁边!");
             e.setCancelled(true);
         }
@@ -188,7 +249,7 @@ public class Events implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBarrelBurn(BlockBurnEvent e) {
-        if (BlockStorage.check(e.getBlock()) instanceof Barrel) {
+        if (StorageCacheUtils.getSfItem(e.getBlock().getLocation()) instanceof Barrel) {
             e.setCancelled(true);
         }
     }

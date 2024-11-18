@@ -56,7 +56,7 @@ public class ElectricDustFabricator extends AContainer implements RecipeDisplayI
 
         for (SlimefunItemStack dust : Constants.dusts) {
             displayRecipes.add(new CustomItemStack(Material.COBBLESTONE,
-                    "&f支持任何变种石头", "&7圆石", "&7安山岩", "&7闪长岩", "&7花岗岩"
+                "&f支持任何变种石头", "&7圆石", "&7安山岩", "&7闪长岩", "&7花岗岩"
             ));
             displayRecipes.add(dust);
         }
@@ -75,7 +75,7 @@ public class ElectricDustFabricator extends AContainer implements RecipeDisplayI
 
                     ItemStack dust = oreWasher.getRandomDust();
                     MachineRecipe recipe = new MachineRecipe(4 / getSpeed(), new ItemStack[] {acceptableInput},
-                            new ItemStack[] {dust});
+                        new ItemStack[] {dust});
 
                     if (menu.fits(recipe.getOutput()[0], getOutputSlots())) {
                         menu.consumeItem(slot);

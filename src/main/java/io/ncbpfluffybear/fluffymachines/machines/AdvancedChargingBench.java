@@ -1,12 +1,12 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.core.attributes.Rechargeable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import me.mrCookieSlime.Slimefun.Objects.SlimefunItem.abstractItems.AContainer;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import org.bukkit.block.Block;
@@ -32,7 +32,7 @@ public class AdvancedChargingBench extends AContainer {
             @Override
             public void onPlayerPlace(@Nonnull BlockPlaceEvent e) {
                 Block b = e.getBlockPlaced();
-                BlockStorage.addBlockInfo(b.getLocation(), "tier", "0");
+                StorageCacheUtils.setData(b.getLocation(), "tier", "0");
             }
         };
     }
@@ -43,8 +43,8 @@ public class AdvancedChargingBench extends AContainer {
             return;
         }
 
-        BlockMenu inv = BlockStorage.getInventory(b);
-        tier = Integer.parseInt(BlockStorage.getLocationInfo(b.getLocation(), "tier"));
+        BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
+        tier = Integer.parseInt(StorageCacheUtils.getData(b.getLocation(), "tier"));
 
         for (int slot : getInputSlots()) {
             ItemStack item = inv.getItemInSlot(slot);

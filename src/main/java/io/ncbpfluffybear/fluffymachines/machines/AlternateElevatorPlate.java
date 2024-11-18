@@ -1,5 +1,6 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
@@ -12,7 +13,6 @@ import io.ncbpfluffybear.fluffymachines.utils.Utils;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import org.bukkit.ChatColor;
@@ -58,10 +58,15 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
             @Override
             public void onPlayerPlace(@Nonnull BlockPlaceEvent e) {
                 Block b = e.getBlock();
-                BlockStorage.addBlockInfo(b, DATA_KEY, "&f第一层");
-                BlockStorage.addBlockInfo(b, "owner", e.getPlayer().getUniqueId().toString());
+                StorageCacheUtils.setData(b.getLocation(), DATA_KEY, "&f楼层 #0");
+                StorageCacheUtils.setData(b.getLocation(), "owner", e.getPlayer().getUniqueId().toString());
             }
         };
+    }
+
+    @Override
+    public boolean loadDataByDefault() {
+        return true;
     }
 
     @Nonnull
@@ -75,7 +80,7 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
         return e -> {
             Block b = e.getClickedBlock().get();
 
-            if (BlockStorage.getLocationInfo(b.getLocation(), "owner").equals(e.getPlayer().getUniqueId().toString())) {
+            if (e.getPlayer().getUniqueId().toString().equals(StorageCacheUtils.getData(b.getLocation(), "owner"))) {
                 openEditor(e.getPlayer(), b);
             }
         };
@@ -93,7 +98,7 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
 
             Block block = b.getWorld().getBlockAt(b.getX(), y, b.getZ());
 
-            if (block.getType() == getItem().getType() && BlockStorage.check(block, getId())) {
+            if (block.getType() == getItem().getType() && StorageCacheUtils.isBlock(block.getLocation(), getId())) {
                 floors.add(block);
             }
         }
@@ -126,7 +131,7 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
             }
 
             Block destination = floors.get(i);
-            String floor = ChatColors.color(BlockStorage.getLocationInfo(destination.getLocation(), DATA_KEY));
+            String floor = ChatColors.color(StorageCacheUtils.getData(destination.getLocation(), DATA_KEY));
 
             addFloor(elevatorMenu, i, p, floor, b, destination);
         }
@@ -167,8 +172,8 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
     public void openEditor(Player p, Block b) {
         ChestMenu menu = new ChestMenu("电梯设置");
 
-        menu.addItem(4, new CustomItemStack(Material.NAME_TAG, "&7点击设置楼层名", "",
-            "&f" + ChatColors.color(BlockStorage.getLocationInfo(b.getLocation(), DATA_KEY))));
+        menu.addItem(4, new CustomItemStack(Material.NAME_TAG, "&7设置楼层名字&e(点击我)", "",
+            "&f" + ChatColors.color(StorageCacheUtils.getData(b.getLocation(), DATA_KEY))));
         menu.addMenuClickHandler(4, (pl, slot, item, action) -> {
             pl.closeInventory();
             pl.sendMessage("");
@@ -176,7 +181,7 @@ public class AlternateElevatorPlate extends SimpleSlimefunItem<BlockUseHandler> 
             pl.sendMessage("");
 
             ChatUtils.awaitInput(pl, message -> {
-                BlockStorage.addBlockInfo(b, DATA_KEY, message.replace(ChatColor.COLOR_CHAR, '&'));
+                StorageCacheUtils.setData(b.getLocation(), DATA_KEY, message.replace(ChatColor.COLOR_CHAR, '&'));
 
                 pl.sendMessage("");
                 Slimefun.getLocalization().sendMessage(p, "machines.ELEVATOR.named", msg -> msg.replace("%floor" +

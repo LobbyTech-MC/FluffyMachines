@@ -108,8 +108,8 @@ public class Paxel extends SlimefunItem implements Listener, NotPlaceable {
         if (sfItem instanceof Paxel) {
 
             boolean netherite = item.getType() == Material.NETHERITE_PICKAXE
-                    || item.getType() == Material.NETHERITE_AXE
-                    || item.getType() == Material.NETHERITE_SHOVEL;
+                || item.getType() == Material.NETHERITE_AXE
+                || item.getType() == Material.NETHERITE_SHOVEL;
 
             if (netherite) {
                 item.setType(Material.NETHERITE_AXE);

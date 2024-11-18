@@ -1,23 +1,23 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
-import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.items.backpacks.SlimefunBackpack;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
-import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
-import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -82,7 +82,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
             @Override
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
                 Block b = e.getBlock();
-                BlockMenu inv = BlockStorage.getInventory(b);
+                BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
 
                 if (inv != null) {
                     inv.dropItems(b.getLocation(), getInputSlots());
@@ -95,7 +95,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
     @Override
     public void preRegister() {
         this.addItemHandler(new BlockTicker() {
-            public void tick(Block b, SlimefunItem sf, Config data) {
+            public void tick(Block b, SlimefunItem sf, SlimefunBlockData data) {
                 BackpackUnloader.this.tick(b);
             }
 
@@ -111,7 +111,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
             return;
         }
 
-        final BlockMenu inv = BlockStorage.getInventory(b);
+        final BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
 
         for (int outputSlot : getOutputSlots()) {
             if (inv.getItemInSlot(outputSlot) == null) {
@@ -135,7 +135,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
                     }
                 }
 
-                PlayerProfile.getBackpack(inputItem, backpack -> {
+                PlayerBackpack.getAsync(inputItem, backpack -> {
                     Inventory bpinv = backpack.getInventory();
                     for (int slot = 0; slot < bpinv.getSize(); slot++) {
                         if (bpinv.getItem(slot) != null) {
@@ -151,7 +151,7 @@ public class BackpackUnloader extends SlimefunItem implements EnergyNetComponent
                             return;
                         }
                     }
-                });
+                }, false);
             } else {
                 // Not a backpack
                 rejectInput(inv);

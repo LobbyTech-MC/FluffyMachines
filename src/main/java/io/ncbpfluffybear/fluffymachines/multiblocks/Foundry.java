@@ -1,5 +1,16 @@
 package io.ncbpfluffybear.fluffymachines.multiblocks;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
+import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
+import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
+import io.ncbpfluffybear.fluffymachines.multiblocks.components.SuperheatedFurnace;
+import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
+import io.ncbpfluffybear.fluffymachines.utils.Utils;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -37,40 +48,41 @@ public class Foundry extends MultiBlockMachine {
     @Override
     public void onInteract(Player p, Block b) {
         // Verify a vanilla blast furnace is not being used
-        if (BlockStorage.checkID(b) == null || !BlockStorage.checkID(b).equals("SUPERHEATED_FURNACE")) {
+        SlimefunBlockData blockData = StorageCacheUtils.getBlock(b.getLocation());
+        if (blockData == null || !blockData.getSfId().equals("SUPERHEATED_FURNACE")) {
             return;
         }
 
-        if (BlockStorage.getLocationInfo(b.getLocation(), "accessible") == null) {
-            BlockStorage.addBlockInfo(b, "accessible", "true");
-            Utils.send(p, "&e铸造厂已注册，接下来请手持岩浆桶并右键点击超热炉以加热。");
-        } else if (BlockStorage.getLocationInfo(b.getLocation(), "ignited") == null) {
+        if (blockData.getData("accessible") == null) {
+            blockData.setData("accessible", "true");
+            Utils.send(p, "&e铸造厂已注册，接下来请手持岩浆桶并右键点击超热炉以加热.");
+        } else if (blockData.getData("ignited") == null) {
             if (p.getInventory().getItemInMainHand().getType() == Material.LAVA_BUCKET) {
 
                 p.getInventory().getItemInMainHand().setType(Material.BUCKET);
                 ArmorStand lavaStand = (ArmorStand) p.getWorld().spawnEntity(b.getLocation().add(0.5, -3, 0.5),
                     EntityType.ARMOR_STAND);
                 lavaStand.getEquipment().setHelmet(new CustomItemStack(
-                        SlimefunUtils.getCustomHead("b6965e6a58684c277d18717cec959f2833a72dfa95661019dbcdf3dbf66b048")));
+                    SlimefunUtils.getCustomHead("b6965e6a58684c277d18717cec959f2833a72dfa95661019dbcdf3dbf66b048")));
                 lavaStand.setCanPickupItems(false);
                 lavaStand.setGravity(false);
                 lavaStand.setVisible(false);
                 lavaStand.setCustomName("hehexdfluff");
                 lavaStand.setCustomNameVisible(false);
                 Furnace furnace = (Furnace) b.getState();
-                furnace.setBurnTime((short)1000000);
+                furnace.setBurnTime((short) 1000000);
                 furnace.update(true);
 
-                BlockStorage.addBlockInfo(b, "stand", String.valueOf(lavaStand.getUniqueId()));
-                BlockStorage.addBlockInfo(b, "ignited", "true");
+                blockData.setData("stand", String.valueOf(lavaStand.getUniqueId()));
+                blockData.setData("ignited", "true");
             } else {
-                Utils.send(p, "&cT这个铸造厂需要岩浆进行激活!");
+                Utils.send(p, "&c这个铸造厂需要岩浆进行激活!");
             }
-        } else if (BlockStorage.getLocationInfo(b.getLocation(), "ignited") != null) {
+        } else if (blockData.getData("ignited") != null) {
             // Reheat furnace (Cosmetic)
             Furnace furnace = (Furnace) b.getState();
-            furnace.setBurnTime((short)1000000);
+            furnace.setBurnTime((short) 1000000);
             furnace.update(true);
         }
-     }
+    }
 }

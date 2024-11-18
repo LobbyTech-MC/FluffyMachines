@@ -1,12 +1,12 @@
 package io.ncbpfluffybear.fluffymachines.multiblocks;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine;
 import io.ncbpfluffybear.fluffymachines.items.Barrel;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -40,14 +40,14 @@ public class ExpDispenser extends MultiBlockMachine {
         }
 
         Block barrel = dispenser.getRelative(((Directional) dispenser.getBlockData()).getFacing());
-        SlimefunItem sfItem = BlockStorage.check(barrel);
+        SlimefunItem sfItem = StorageCacheUtils.getSfItem(barrel.getLocation());
 
         if (sfItem instanceof Barrel) {
             Barrel sfBarrel = (Barrel) sfItem;
             if (sfBarrel.getStoredItem(barrel).getType() == Material.EXPERIENCE_BOTTLE) {
                 experience += sfBarrel.getStored(barrel) * EXP_PER_BOTTLE;
                 sfBarrel.setStored(barrel, 0);
-                sfBarrel.updateMenu(barrel, BlockStorage.getInventory(barrel), true, sfBarrel.getCapacity(b));
+                sfBarrel.updateMenu(barrel, StorageCacheUtils.getMenu(barrel.getLocation()), true, sfBarrel.getCapacity(b));
             }
         }
 

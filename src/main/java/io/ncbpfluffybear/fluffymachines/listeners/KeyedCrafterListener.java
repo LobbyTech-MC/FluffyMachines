@@ -1,5 +1,6 @@
 package io.ncbpfluffybear.fluffymachines.listeners;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
@@ -8,10 +9,7 @@ import io.github.thebusybiscuit.slimefun4.implementation.SlimefunItems;
 import io.ncbpfluffybear.fluffymachines.machines.AutoCraftingTable;
 import io.ncbpfluffybear.fluffymachines.machines.SmartFactory;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import java.util.Optional;
-import javax.annotation.Nullable;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
-import org.apache.commons.lang.WordUtils;
+import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,6 +18,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class KeyedCrafterListener implements Listener {
 
@@ -58,8 +59,8 @@ public class KeyedCrafterListener implements Listener {
 
                 if (SmartFactory.getAcceptedItems().contains((SlimefunItemStack) key.getItem())) {
 
-                    BlockStorage.addBlockInfo(b, "recipe", key.getId());
-                    BlockStorage.getInventory(b).replaceExistingItem(SmartFactory.RECIPE_SLOT,
+                    StorageCacheUtils.setData(b.getLocation(), "recipe", key.getId());
+                    StorageCacheUtils.getMenu(b.getLocation()).replaceExistingItem(SmartFactory.RECIPE_SLOT,
                             SmartFactory.getDisplayItem(key, ((RecipeDisplayItem) sfBlock).getDisplayRecipes())
                     );
                     Utils.send(p, "&a已设置目标物品为 " + key.getItemName());
@@ -79,12 +80,11 @@ public class KeyedCrafterListener implements Listener {
                     return;
                 }
 
-                BlockStorage.getInventory(b).replaceExistingItem(AutoCraftingTable.KEY_SLOT,
+                StorageCacheUtils.getMenu(b.getLocation()).replaceExistingItem(AutoCraftingTable.KEY_SLOT,
                         AutoCraftingTable.createKeyItem(item.getType())
                 );
 
-                Utils.send(p, "&a已设置目标物品为 "
-                        + WordUtils.capitalizeFully(item.getType().name().replace("_", " "))
+                Utils.send(p, "&a已设置目标物品为 " + ItemStackHelper.getDisplayName(item)
                 );
             }
         }

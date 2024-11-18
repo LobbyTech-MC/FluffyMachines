@@ -1,5 +1,6 @@
 package io.ncbpfluffybear.fluffymachines.items.tools;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable;
 import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
@@ -10,7 +11,6 @@ import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -50,7 +50,7 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
             if (Tag.LOGS.getValues().contains(e.getBlock().getType())) {
 
                 // Prevent use on Slimefun blocks
-                if (BlockStorage.checkID(e.getBlock()) != null) {
+                if (StorageCacheUtils.hasBlock(e.getBlock().getLocation())) {
                     return;
                 }
 
@@ -64,7 +64,7 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
 
                 for (Block b : logs) {
                     if (Slimefun.getProtectionManager().hasPermission(e.getPlayer(), b,
-                        Interaction.BREAK_BLOCK) && BlockStorage.checkID(b) == null) {
+                        Interaction.BREAK_BLOCK) && !StorageCacheUtils.hasBlock(b.getLocation())) {
                         if (triggerOtherPlugins.getValue()) {
                             Bukkit.getPluginManager().callEvent(new AlternateBreakEvent(b, e.getPlayer()));
                         }
@@ -89,7 +89,7 @@ public class UpgradedLumberAxe extends SimpleSlimefunItem<ItemUseHandler> implem
 
                     for (Block b : logs) {
                         if (Slimefun.getProtectionManager().hasPermission(e.getPlayer(), b,
-                            Interaction.BREAK_BLOCK) && BlockStorage.checkID(b) == null) {
+                            Interaction.BREAK_BLOCK) && !StorageCacheUtils.hasBlock(b.getLocation())) {
                             stripLog(b);
                         }
                     }

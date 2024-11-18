@@ -1,16 +1,19 @@
 package io.ncbpfluffybear.fluffymachines;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.callback.IAsyncReadCallback;
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
 import io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.collections.Pair;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.BlobBuildUpdater;
-import io.github.thebusybiscuit.slimefun4.libraries.dough.updater.GitHubBuildsUpdater;
 import io.ncbpfluffybear.fluffymachines.listeners.KeyedCrafterListener;
 import io.ncbpfluffybear.fluffymachines.utils.Constants;
 import io.ncbpfluffybear.fluffymachines.utils.Events;
 import io.ncbpfluffybear.fluffymachines.utils.McMMOEvents;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,8 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import lombok.SneakyThrows;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import net.guizhanss.guizhanlibplugin.updater.GuizhanUpdater;
+import net.guizhanss.slimefun4.utils.WikiUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -44,7 +50,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
     private static FluffyMachines instance;
     public static final HashMap<ItemStack, List<Pair<ItemStack, List<RecipeChoice>>>> shapedVanillaRecipes = new HashMap<>();
     public static final HashMap<ItemStack, List<Pair<ItemStack, List<RecipeChoice>>>> shapelessVanillaRecipes =
-            new HashMap<>();
+        new HashMap<>();
 
     @SneakyThrows
     @Override
@@ -53,8 +59,8 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
         // Read something from your config.yml
         Config cfg = new Config(this);
 
-        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("Dev - ")) {
-            new BlobBuildUpdater(this, getFile(), "FluffyMachines", "Dev").start();
+        if (cfg.getBoolean("options.auto-update") && getDescription().getVersion().startsWith("Build ")) {
+            GuizhanUpdater.start(this, getFile(), "SlimefunGuguProject", "FluffyMachines", "master");
         }
 
         // Register ACT Recipes
@@ -76,7 +82,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
 
                 if (!shapedVanillaRecipes.containsKey(key)) {
                     shapedVanillaRecipes.put(key,
-                            new ArrayList<>(Collections.singletonList(new Pair<>(sr.getResult(), rc))));
+                        new ArrayList<>(Collections.singletonList(new Pair<>(sr.getResult(), rc))));
                 } else {
                     shapedVanillaRecipes.get(key).add(new Pair<>(sr.getResult(), rc));
                 }
@@ -88,7 +94,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
                 // Key has a list of recipe options
                 if (!shapelessVanillaRecipes.containsKey(key)) {
                     shapelessVanillaRecipes.put(key,
-                            new ArrayList<>(Collections.singletonList(new Pair<>(slr.getResult(), slr.getChoiceList()))));
+                        new ArrayList<>(Collections.singletonList(new Pair<>(slr.getResult(), slr.getChoiceList()))));
                 } else {
                     shapelessVanillaRecipes.get(key).add(new Pair<>(slr.getResult(), slr.getChoiceList()));
                 }
@@ -97,13 +103,15 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
 
         // Register McMMO Events
         if (getServer().getPluginManager().isPluginEnabled("McMMO")) {
-            Bukkit.getLogger().log(Level.INFO, "McMMO found!");
+            Bukkit.getLogger().log(Level.INFO, "McMMO 已接入!");
             getServer().getPluginManager().registerEvents(new McMMOEvents(), this);
         }
 
         // Registering Items
         FluffyItemSetup.setup(this);
         FluffyItemSetup.setupBarrels(this);
+
+        WikiUtils.setupJson(this);
 
         // Register Events Class
         getServer().getPluginManager().registerEvents(new Events(), this);
@@ -121,12 +129,12 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command cmd, @Nonnull String label, String[] args) {
 
         if (args.length == 0) {
-            Utils.send(sender, "&cInvalid command");
+            Utils.send(sender, "&c无效的指令");
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            Utils.send(sender, "&cThere are no console commands available");
+            Utils.send(sender, "&c只有玩家才能执行该指令");
             return true;
         }
 
@@ -141,7 +149,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
                 return true;
             case "VERSION":
             case "V":
-                Utils.send(p, "&eThe current version is " + this.getPluginVersion());
+                Utils.send(p, "&e当前版本:" + this.getPluginVersion());
                 return true;
         }
 
@@ -150,18 +158,30 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
                 case "ADDINFO":
 
                     if (args.length != 3) {
-                        Utils.send(p, "&cPlease specify the key and the data");
+                        Utils.send(p, "&c请指定键名和值");
 
                     } else {
                         RayTraceResult rayResult = p.rayTraceBlocks(5d);
-                        if (rayResult != null && rayResult.getHitBlock() != null
-                                && BlockStorage.hasBlockInfo(rayResult.getHitBlock())) {
-
-                            BlockStorage.addBlockInfo(rayResult.getHitBlock(), args[1], args[2]);
-                            Utils.send(p, "&aInfo has been added.");
-
+                        SlimefunBlockData blockData = (rayResult != null && rayResult.getHitBlock() != null) ?
+                                StorageCacheUtils.getBlock(rayResult.getHitBlock().getLocation()) : null;
+                        if (blockData != null) {
+                            if (blockData.isDataLoaded()) {
+                                blockData.setData(args[1], args[2]);
+                                Utils.send(p, "&a信息已应用.");
+                            } else {
+                                Slimefun.getDatabaseManager().getBlockDataController().loadBlockDataAsync(
+                                        blockData,
+                                        new IAsyncReadCallback<SlimefunBlockData>() {
+                                            @Override
+                                            public void onResult(SlimefunBlockData result) {
+                                                blockData.setData(args[1], args[2]);
+                                                Utils.send(p, "&a信息已应用.");
+                                            }
+                                        }
+                                );
+                            }
                         } else {
-                            Utils.send(p, "&cYou must be looking at a Slimefun block");
+                            Utils.send(p, "&c你必须看向一个Slimefun方块");
                         }
                     }
                     return true;
@@ -171,7 +191,7 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
             }
         }
 
-        Utils.send(p, "&cCommand not found");
+        Utils.send(p, "&c指令不存在");
 
         return false;
     }
@@ -188,13 +208,18 @@ public class FluffyMachines extends JavaPlugin implements SlimefunAddon {
         }
 
         if (players > 0) {
-            Bukkit.getLogger().log(Level.INFO, "Auto-saved all player data for {0} player(s)!", players);
+            Bukkit.getLogger().log(Level.INFO, "已自动保存 {0} 位玩家的数据!", players);
         }
     }
 
     @Override
     public String getBugTrackerURL() {
-        return "https://github.com/NCBPFluffyBear/FluffyMachines/issues";
+        return "https://github.com/SlimefunGuguProject/FluffyMachines/issues";
+    }
+
+    @Override
+    public String getWikiURL() {
+        return "https://slimefun-addons-wiki.guizhanss.cn/fluffy-machines/{0}";
     }
 
     @Nonnull

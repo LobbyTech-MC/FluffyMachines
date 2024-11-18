@@ -1,12 +1,12 @@
 package io.ncbpfluffybear.fluffymachines.multiblocks.components;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetProvider;
 import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,7 +27,7 @@ public class GeneratorCore extends SlimefunItem implements EnergyNetProvider {
     // Making this block an EnergyNetProvider instead of an EnergyNetComponent causes it to tick. However, this block will not actively
     // push out energy unless made a generator.
     @Override
-    public int getGeneratedOutput(@Nonnull Location l, @Nonnull Config data) {
+    public int getGeneratedOutput(@Nonnull Location l, @Nonnull SlimefunBlockData data) {
         return 0;
     }
 

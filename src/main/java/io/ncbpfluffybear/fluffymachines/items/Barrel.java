@@ -1,5 +1,7 @@
 package io.ncbpfluffybear.fluffymachines.items;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemHandler;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
@@ -15,20 +17,13 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.ncbpfluffybear.fluffymachines.objects.DoubleHologramOwner;
 import io.ncbpfluffybear.fluffymachines.objects.NonHopperableBlock;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.List;
-import java.util.Locale;
-import javax.annotation.Nonnull;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ClickAction;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
-import org.apache.commons.lang.WordUtils;
+import net.guizhanss.guizhanlib.minecraft.helper.inventory.ItemStackHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -40,6 +35,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * A Remake of Barrels by John000708
  *
@@ -47,6 +48,8 @@ import org.bukkit.util.Vector;
  */
 
 public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
+
+    private final String WIKI_PAGE = "barrels";
 
     private final int[] inputBorder = {9, 10, 11, 12, 18, 21, 27, 28, 29, 30};
     private final int[] outputBorder = {14, 15, 16, 17, 23, 26, 32, 33, 34, 35};
@@ -62,7 +65,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
 
     private final int OVERFLOW_AMOUNT = 3240;
     public static final DecimalFormat STORAGE_INDICATOR_FORMAT = new DecimalFormat("###,###.####",
-            DecimalFormatSymbols.getInstance(Locale.ROOT));
+        DecimalFormatSymbols.getInstance(Locale.ROOT));
 
     private final ItemStack HOLOGRAM_OFF_ITEM = new CustomItemStack(Material.QUARTZ_SLAB, "&3全息显示 &c(关闭)");
     private final ItemStack HOLOGRAM_ON_ITEM = new CustomItemStack(Material.QUARTZ_SLAB, "&3全息显示 &a(开启)");
@@ -100,7 +103,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
             @Override
             public boolean canOpen(@Nonnull Block b, @Nonnull Player p) {
                 if (Utils.canOpen(b, p)) {
-                    updateMenu(b, BlockStorage.getInventory(b), true, getCapacity(b));
+                    updateMenu(b, StorageCacheUtils.getMenu(b.getLocation()), true, getCapacity(b));
                     return true;
                 }
 
@@ -135,7 +138,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
                 Block b = e.getBlock();
                 Player p = e.getPlayer();
-                BlockMenu inv = BlockStorage.getInventory(b);
+                BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
                 int capacity = getCapacity(b);
                 int stored = getStored(b);
 
@@ -176,8 +179,8 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
 
                         if (stored > OVERFLOW_AMOUNT) {
 
-                            Utils.send(p, "&e蓬松箱子内有超过 " + OVERFLOW_AMOUNT + " 个物品! " +
-                                    "仅掉落 " + OVERFLOW_AMOUNT + " 个物品!");
+                            Utils.send(p, "&e蓬松箱子内有超过" + OVERFLOW_AMOUNT + "个物品! " +
+                                "仅掉落 " + OVERFLOW_AMOUNT + "个物品!");
                             int toRemove = OVERFLOW_AMOUNT;
                             while (toRemove >= stackSize) {
 
@@ -233,7 +236,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         int capacity = getCapacity(b);
 
         // Initialize an empty barrel
-        if (BlockStorage.getLocationInfo(b.getLocation(), "stored") == null) {
+        if (StorageCacheUtils.getData(b.getLocation(), "stored") == null) {
 
             menu.replaceExistingItem(STATUS_SLOT, new CustomItemStack(
                     Material.LIME_STAINED_GLASS_PANE, "&6已存储物品: &e0" + " / " + capacity, "&70%"));
@@ -255,7 +258,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         menu.addMenuClickHandler(DISPLAY_SLOT, ChestMenuUtils.getEmptyClickHandler());
 
         // Toggle hologram (Dynamic button)
-        String holo = BlockStorage.getLocationInfo(b.getLocation(), "holo");
+        String holo = StorageCacheUtils.getData(b.getLocation(), "holo");
         if (holo == null || holo.equals("true")) {
             menu.replaceExistingItem(HOLOGRAM_TOGGLE_SLOT, HOLOGRAM_ON_ITEM);
         } else {
@@ -267,7 +270,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         });
 
         // Toggle trash (Dynamic button)
-        String trash = BlockStorage.getLocationInfo(b.getLocation(), "trash");
+        String trash = StorageCacheUtils.getData(b.getLocation(), "trash");
         if (trash == null || trash.equals("false")) {
             menu.replaceExistingItem(TRASH_TOGGLE_SLOT, TRASH_OFF_ITEM);
         } else {
@@ -292,7 +295,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         int EXTRACT_SLOT = 44;
         menu.replaceExistingItem(EXTRACT_SLOT,
                 new CustomItemStack(Material.RED_STAINED_GLASS_PANE, "&6快速取出",
-                        "&7> 左键点击将物品取出", "&7并填满你的物品栏",
+                        "&7> 左键点击将物品取出并填满你的物品栏",
                         "&7> 右键点击取出1个物品"
                 ));
         menu.addMenuClickHandler(EXTRACT_SLOT, (pl, slot, item, action) -> {
@@ -306,7 +309,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         addItemHandler(new BlockTicker() {
 
             @Override
-            public void tick(Block b, SlimefunItem sf, Config data) {
+            public void tick(Block b, SlimefunItem sf, SlimefunBlockData data) {
                 Barrel.this.tick(b);
             }
 
@@ -317,8 +320,13 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         });
     }
 
+    @Override
+    public void postRegister() {
+        addWikiPage(WIKI_PAGE);
+    }
+
     protected void tick(Block b) {
-        BlockMenu inv = BlockStorage.getInventory(b);
+        BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
         int capacity = getCapacity(b);
 
         for (int slot : INPUT_SLOTS) {
@@ -358,7 +366,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
                     updateMenu(b, inv, false, capacity);
                 }
             } else {
-                String useTrash = BlockStorage.getLocationInfo(b.getLocation(), "trash");
+                String useTrash = StorageCacheUtils.getData(b.getLocation(), "trash");
 
                 if (useTrash != null && useTrash.equals("true")) {
                     inv.replaceExistingItem(slot, null);
@@ -445,25 +453,27 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
      * @param inv is the barrel's inventory
      */
     public void updateMenu(Block b, BlockMenu inv, boolean force, int capacity) {
-        String hasHolo = BlockStorage.getLocationInfo(b.getLocation(), "holo");
+        String hasHolo = StorageCacheUtils.getData(b.getLocation(), "holo");
         int stored = getStored(b);
-        String itemName;
+        String itemName = "";
+        ItemStack item = inv.getItemInSlot(DISPLAY_SLOT);
+        if (item == null) {
+            return;
+        }
 
         String storedPercent = doubleRoundAndFade((double) stored / (double) capacity * 100);
         String storedStacks =
-                doubleRoundAndFade((double) stored / (double) inv.getItemInSlot(DISPLAY_SLOT).getMaxStackSize());
+            doubleRoundAndFade((double) stored / (double) inv.getItemInSlot(DISPLAY_SLOT).getMaxStackSize());
 
         // This helps a bit with lag, but may have visual impacts
         if (inv.hasViewer() || force) {
             inv.replaceExistingItem(STATUS_SLOT, new CustomItemStack(
-                    Material.LIME_STAINED_GLASS_PANE, "&6已储存物品: &e" + stored + " / " + capacity,
-                    "&b" + storedStacks + " 组 &8| &7" + storedPercent + "&7%"));
+                Material.LIME_STAINED_GLASS_PANE, "&6已储存物品: &e" + stored + " / " + capacity,
+                "&b" + storedStacks + "组 &8| &7" + storedPercent + "&7%"));
         }
 
-        if (inv.getItemInSlot(DISPLAY_SLOT) != null && inv.getItemInSlot(DISPLAY_SLOT).getItemMeta().hasDisplayName()) {
-            itemName = inv.getItemInSlot(DISPLAY_SLOT).getItemMeta().getDisplayName();
-        } else {
-            itemName = WordUtils.capitalizeFully(inv.getItemInSlot(DISPLAY_SLOT).getType().name().replace("_", " "));
+        if (inv.getItemInSlot(DISPLAY_SLOT) != null) {
+            itemName = ItemStackHelper.getDisplayName(inv.getItemInSlot(DISPLAY_SLOT));
         }
 
         if (showHologram.getValue() && (hasHolo == null || hasHolo.equals("true"))) {
@@ -484,13 +494,13 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
      * @param b is the block the hologram is linked to
      */
     private void toggleHolo(Block b, int capacity) {
-        String toggle = BlockStorage.getLocationInfo(b.getLocation(), "holo");
+        String toggle = StorageCacheUtils.getData(b.getLocation(), "holo");
         if (toggle == null || toggle.equals("true")) {
             putBlockData(b, HOLOGRAM_TOGGLE_SLOT, "holo", HOLOGRAM_OFF_ITEM, false);
             removeHologram(b);
         } else {
             putBlockData(b, HOLOGRAM_TOGGLE_SLOT, "holo", HOLOGRAM_ON_ITEM, true);
-            updateMenu(b, BlockStorage.getInventory(b), false, capacity);
+            updateMenu(b, StorageCacheUtils.getMenu(b.getLocation()), false, capacity);
         }
     }
 
@@ -498,7 +508,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
      * Toggle auto dispose status of barrel
      */
     private void toggleTrash(Block b) {
-        String toggle = BlockStorage.getLocationInfo(b.getLocation(), "trash");
+        String toggle = StorageCacheUtils.getData(b.getLocation(), "trash");
         if (toggle == null || toggle.equals("false")) {
             putBlockData(b, TRASH_TOGGLE_SLOT, "trash", TRASH_ON_ITEM, true);
         } else {
@@ -510,8 +520,8 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
      * Sets a key in BlockStorage and replaces an item
      */
     private void putBlockData(Block b, int slot, String key, ItemStack displayItem, boolean data) {
-        BlockStorage.addBlockInfo(b.getLocation(), key, String.valueOf(data));
-        BlockStorage.getInventory(b).replaceExistingItem(slot, displayItem);
+        StorageCacheUtils.setData(b.getLocation(), key, String.valueOf(data));
+        StorageCacheUtils.getMenu(b.getLocation()).replaceExistingItem(slot, displayItem);
     }
 
     public void insertAll(Player p, BlockMenu menu, Block b) {
@@ -533,7 +543,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
             }
         }
 
-        BlockStorage.addBlockInfo(b.getLocation(), "stored", String.valueOf(stored));
+        StorageCacheUtils.setData(b.getLocation(), "stored", String.valueOf(stored));
         updateMenu(b, menu, false, capacity);
     }
 
@@ -611,22 +621,22 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
         String formattedString = STORAGE_INDICATOR_FORMAT.format(num);
         if (formattedString.indexOf('.') != -1) {
             return formattedString.substring(0, formattedString.indexOf('.')) + ChatColor.DARK_GRAY
-                    + formattedString.substring(formattedString.indexOf('.')) + ChatColor.GRAY;
+                + formattedString.substring(formattedString.indexOf('.')) + ChatColor.GRAY;
         } else {
             return formattedString;
         }
     }
 
     public int getStored(Block b) {
-        return Integer.parseInt(BlockStorage.getLocationInfo(b.getLocation(), "stored"));
+        return Integer.parseInt(StorageCacheUtils.getData(b.getLocation(), "stored"));
     }
 
     public void setStored(Block b, int amount) {
-        BlockStorage.addBlockInfo(b.getLocation(), "stored", String.valueOf(amount));
+        StorageCacheUtils.setData(b.getLocation(), "stored", String.valueOf(amount));
     }
 
     public ItemStack getStoredItem(Block b) {
-        return Utils.unKeyItem(BlockStorage.getInventory(b).getItemInSlot(DISPLAY_SLOT));
+        return Utils.unKeyItem(StorageCacheUtils.getMenu(b.getLocation()).getItemInSlot(DISPLAY_SLOT));
     }
 
     /**

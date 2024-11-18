@@ -1,5 +1,7 @@
 package io.ncbpfluffybear.fluffymachines.machines;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -17,19 +19,12 @@ import io.github.thebusybiscuit.slimefun4.utils.ChestMenuUtils;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
 import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
 import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
 import me.mrCookieSlime.Slimefun.api.inventory.DirtyChestMenu;
 import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
-import org.apache.commons.lang.WordUtils;
+import net.guizhanss.minecraft.guizhanlib.gugu.minecraft.helpers.enchantments.EnchantmentHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,6 +35,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetComponent {
 
@@ -63,7 +64,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
     private static final Map<BlockPosition, Integer> progress = new HashMap<>();
 
     private static final ItemStack DEFAULT_SELECTION_ITEM = new CustomItemStack(Material.ENCHANTED_BOOK,
-            "&5附魔选择器", "", "&e> 点进重新扫描 <");
+        "&5附魔选择器", "", "&e> 点进重新扫描 <");
 
     private static final ItemStack PROGRESS_ITEM = new CustomItemStack(Material.EXPERIENCE_BOTTLE, "&a进度");
 
@@ -103,8 +104,8 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
             @Override
             public boolean canOpen(@Nonnull Block b, @Nonnull Player p) {
                 return (p.hasPermission("slimefun.inventory.bypass")
-                        || Slimefun.getProtectionManager().hasPermission(
-                        p, b.getLocation(), Interaction.INTERACT_BLOCK));
+                    || Slimefun.getProtectionManager().hasPermission(
+                    p, b.getLocation(), Interaction.INTERACT_BLOCK));
             }
 
             @Override
@@ -116,9 +117,9 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
             public int[] getSlotsAccessedByItemTransport(DirtyChestMenu menu, ItemTransportFlow flow, ItemStack item) {
                 if (flow == ItemTransportFlow.INSERT) {
                     if (item.getType() == Material.BOOK) {
-                        return new int[]{BOOK_SLOT};
+                        return new int[] {BOOK_SLOT};
                     } else {
-                        return new int[]{ITEM_SLOT};
+                        return new int[] {ITEM_SLOT};
                     }
                 } else if (flow == ItemTransportFlow.WITHDRAW) {
                     return OUTPUT_SLOTS;
@@ -134,7 +135,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
             @Override
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
                 Block b = e.getBlock();
-                BlockMenu inv = BlockStorage.getInventory(b);
+                BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
 
                 if (inv != null) {
                     inv.dropItems(b.getLocation(), ITEM_SLOT);
@@ -150,7 +151,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
         addItemHandler(new BlockTicker() {
 
             @Override
-            public void tick(Block b, SlimefunItem sf, Config data) {
+            public void tick(Block b, SlimefunItem sf, SlimefunBlockData data) {
                 AdvancedAutoDisenchanter.this.tick(b);
             }
 
@@ -168,7 +169,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
             return;
         }
 
-        BlockMenu inv = BlockStorage.getInventory(b);
+        BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
         final BlockPosition pos = new BlockPosition(b.getWorld(), b.getX(), b.getY(), b.getZ()); // Used to log progress since we have progress bar
         int currentProgress = progress.getOrDefault(pos, 0); // Get current progress from map
         int selectedEnchant = getSelectedIndex(b.getLocation()); // Picked enchant to remove
@@ -190,14 +191,14 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
         // Validate input
         SlimefunItem sfItem = SlimefunItem.getByItem(input);
         if (input == null || input.getEnchantments().isEmpty()
-                || sfItem != null && !sfItem.isDisenchantable()
+            || sfItem != null && !sfItem.isDisenchantable()
         ) {
             return;
         }
 
         // Check for ancient book
         if (!SlimefunUtils.isItemSimilar(inv.getItemInSlot(BOOK_SLOT),
-                FluffyItems.ANCIENT_BOOK.getItem().getItem(), false, false)
+            FluffyItems.ANCIENT_BOOK.getItem().getItem(), false, false)
         ) {
             return;
         }
@@ -207,7 +208,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
             progress.put(pos, ++currentProgress);
 
             ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, PROCESS_TIME_TICKS - currentProgress,
-                    PROCESS_TIME_TICKS, PROGRESS_ITEM);
+                PROCESS_TIME_TICKS, PROGRESS_ITEM);
 
             removeCharge(b.getLocation(), ENERGY_CONSUMPTION);
 
@@ -242,7 +243,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
         progress.put(pos, 0);
         currentProgress = progress.getOrDefault(pos, 0);
         ChestMenuUtils.updateProgressbar(inv, PROGRESS_SLOT, PROCESS_TIME_TICKS - currentProgress,
-                PROCESS_TIME_TICKS, PROGRESS_ITEM);
+            PROCESS_TIME_TICKS, PROGRESS_ITEM);
         setSelectedIndex(b, -2); // Set selection to "Reload"
         inv.replaceExistingItem(SELECTION_SLOT, DEFAULT_SELECTION_ITEM.clone()); // Reset selection item
     }
@@ -320,10 +321,13 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
                 textColor = ChatColor.GREEN;
             }
 
-            lore.add(textColor + WordUtils.capitalizeFully("- " + disenchantKeys[i].getKey()
-                    .getKey().replace('_', ' ')) + " "
-                    + Utils.toRoman(disenchants.get(disenchantKeys[i]))
-            );
+            String ench = textColor +
+                "- " +
+                EnchantmentHelper.getName(disenchantKeys[i]) +
+                " " +
+                Utils.toRoman(disenchants.get(disenchantKeys[i]));
+
+            lore.add(ench);
         }
 
         setSelectionItem(menu, lore);
@@ -375,11 +379,11 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
      * i.e. FM Glow
      */
     private int getSelectedIndex(Location l) {
-        return Integer.parseInt(BlockStorage.getLocationInfo(l, "selection"));
+        return Integer.parseInt(StorageCacheUtils.getData(l, "selection"));
     }
 
     private void setSelectedIndex(Block b, int index) {
-        BlockStorage.addBlockInfo(b, "selection", String.valueOf(index));
+        StorageCacheUtils.setData(b.getLocation(), "selection", String.valueOf(index));
     }
 
     @Nonnull

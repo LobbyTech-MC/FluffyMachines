@@ -1,5 +1,7 @@
 package io.ncbpfluffybear.fluffymachines.items.tools;
 
+import com.xzavier0722.mc.plugin.slimefun4.storage.controller.SlimefunBlockData;
+import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemSetting;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -7,12 +9,12 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
 import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
 import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.data.persistent.PersistentDataAPI;
 import io.github.thebusybiscuit.slimefun4.libraries.dough.protection.Interaction;
 import io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils;
 import io.ncbpfluffybear.fluffymachines.FluffyMachines;
 import io.ncbpfluffybear.fluffymachines.utils.FluffyItems;
 import io.ncbpfluffybear.fluffymachines.utils.Utils;
-import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -59,7 +61,8 @@ public class WarpPadConfigurator extends SlimefunItem implements HologramOwner, 
         Block b = e.getClickedBlock();
         Player p = e.getPlayer();
 
-        if (BlockStorage.hasBlockInfo(b) && BlockStorage.check(b) == FluffyItems.WARP_PAD.getItem()
+        SlimefunBlockData blockData = StorageCacheUtils.getBlock(b.getLocation());
+        if (blockData != null && blockData.getSfId().equals(FluffyItems.WARP_PAD.getItem().getId())
             && Slimefun.getProtectionManager().hasPermission(p, b.getLocation(), Interaction.PLACE_BLOCK)) {
             if (SlimefunUtils.isItemSimilar(p.getInventory().getItemInMainHand(), FluffyItems.WARP_PAD_CONFIGURATOR,
                 false)) {
@@ -67,69 +70,58 @@ public class WarpPadConfigurator extends SlimefunItem implements HologramOwner, 
                 ItemStack item = p.getInventory().getItemInMainHand();
                 ItemMeta meta = item.getItemMeta();
                 List<String> lore = meta.getLore();
-                PersistentDataContainer pdc = meta.getPersistentDataContainer();
 
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
                     // Destination
                     if (p.isSneaking()) {
-                        pdc.set(world, PersistentDataType.STRING, b.getWorld().getName());
+                        StorageCacheUtils.executeAfterLoad(blockData, () -> {
+                            PersistentDataAPI.setString(meta, world, b.getWorld().getName());
+                            PersistentDataAPI.setInt(meta, xCoord, b.getX());
+                            PersistentDataAPI.setInt(meta, yCoord, b.getY());
+                            PersistentDataAPI.setInt(meta, zCoord, b.getZ());
+                            lore.set(LORE_COORDINATE_INDEX, ChatColor.translateAlternateColorCodes(
+                                '&', "&e连接点坐标: &7" + b.getX() + ", " + b.getY() + ", " + b.getZ()));
 
-                        pdc.set(xCoord, PersistentDataType.INTEGER, b.getX());
-                        pdc.set(yCoord, PersistentDataType.INTEGER, b.getY());
-                        pdc.set(zCoord, PersistentDataType.INTEGER, b.getZ());
-                        lore.set(LORE_COORDINATE_INDEX, ChatColor.translateAlternateColorCodes(
-                            '&', "&e连接点坐标: &7" + b.getX() + ", " + b.getY() + ", " + b.getZ()));
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
 
-                        meta.setLore(lore);
-                        item.setItemMeta(meta);
+                            updateHologram(b, "&a&l终点");
+                            blockData.setData("type", "destination");
+                            Utils.send(p, "&3此传送装置已标记为&a终点&3。已记录该传送装置的坐标。");
+                        }, false);
+                    } else if (PersistentDataAPI.hasString(meta, world) && b.getWorld().getName().equals(
+                        PersistentDataAPI.getString(meta, world))) {
+                        // Origin
+                        StorageCacheUtils.executeAfterLoad(blockData, () -> {
+                            int x = PersistentDataAPI.getInt(meta, xCoord, 0);
+                            int y = PersistentDataAPI.getInt(meta, yCoord, 0);
+                            int z = PersistentDataAPI.getInt(meta, zCoord, 0);
 
-                        updateHologram(b, "&a&l终点");
-                        BlockStorage.addBlockInfo(b, "type", "destination");
-                        Utils.send(p, "&3此传送装置已标记为&a终点&3。已记录该传送装置的坐标。");
+                            if (Math.abs(x - b.getX()) > MAX_DISTANCE.getValue()
+                                || Math.abs(z - b.getZ()) > MAX_DISTANCE.getValue()) {
 
-                    // Origin
-                    } else if (pdc.has(world, PersistentDataType.STRING) && b.getWorld().getName().equals(
-                        pdc.get(world, PersistentDataType.STRING))) {
-                        int x = pdc.getOrDefault(xCoord, PersistentDataType.INTEGER, 0);
-                        int y = pdc.getOrDefault(yCoord, PersistentDataType.INTEGER, 0);
-                        int z = pdc.getOrDefault(zCoord, PersistentDataType.INTEGER, 0);
-
-                        if (Math.abs(x - b.getX()) > MAX_DISTANCE.getValue()
-                            || Math.abs(z - b.getZ()) > MAX_DISTANCE.getValue()) {
-
-                            Utils.send(p, "&c传送装置之间的直线距离不能超过"
+                                Utils.send(p, "&c传送装置之间的直线距离不能超过"
                                     + MAX_DISTANCE.getValue() + "个方块！");
 
-                            return;
-                        }
+                                return;
+                            }
 
-                        registerOrigin(b, x, y, z);
+                            blockData.setData("type", "origin");
+                            blockData.setData("x", String.valueOf(x));
+                            blockData.setData("y", String.valueOf(y));
+                            blockData.setData("z", String.valueOf(z));
 
-                        Utils.send(p, "&3此传送装置已标记为 &a起点" +
-                            "&3并设置了终点装置的坐标！");
+                            updateHologram(b, "&a&l起点");
 
+                            Utils.send(p, "&3此传送装置已标记为&a起点&3并设置了终点装置的坐标！");
+                        }, false);
                     } else {
-
-                        Utils.send(p, "&c蹲下 + 右键点击传送装置设置终点," +
-                            " " + "右键点击另一个传送装置设置起点!");
+                        Utils.send(p, "&c蹲下 + 右键点击传送装置设置终点，右键点击另一个传送装置设置起点!");
                     }
-
                 }
-
             } else {
                 Utils.send(p, "&c使用传送装置配置器来配置传送装置");
             }
         }
-    }
-
-    private void registerOrigin(Block b, int x, int y, int z) {
-        BlockStorage.addBlockInfo(b, "type", "origin");
-
-        BlockStorage.addBlockInfo(b, "x", String.valueOf(x));
-        BlockStorage.addBlockInfo(b, "y", String.valueOf(y));
-        BlockStorage.addBlockInfo(b, "z", String.valueOf(z));
-
-        updateHologram(b, "&a&lOrigin");
     }
 }
