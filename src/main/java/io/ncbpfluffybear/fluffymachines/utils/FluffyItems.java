@@ -412,7 +412,7 @@ public class FluffyItems {
         FluffyWrench.Wrench.DEFAULT.getMaterial(),
         "&6扳手",
         "",
-        "&7快速拆除Slimefun的网络元件和机器（消耗耐久）",
+        "&7快速拆除粘液科技的网络元件和机器（消耗耐久）",
         "",
         "&e左键点击/右键点击&7进行拆除"
     );
@@ -422,7 +422,7 @@ public class FluffyItems {
         FluffyWrench.Wrench.REINFORCED.getMaterial(),
         "&b改进扳手",
         "",
-        "&7快速拆除Slimefun的网络元件和机器（消耗耐久）",
+        "&7快速拆除粘液科技的网络元件和机器（消耗耐久）",
         "",
         "&e左键点击/右键点击&7进行拆除"
     );
@@ -432,7 +432,7 @@ public class FluffyItems {
         FluffyWrench.Wrench.CARBONADO.getMaterial(),
         "&7精制扳手",
         "",
-        "&7快速拆除Slimefun的网络元件和机器（每次使用消耗 1J 电力）",
+        "&7快速拆除粘液科技的网络元件和机器（每次使用消耗 1J 电力）",
         "",
         "&e左键点击/右键点击&7进行拆除",
         "",

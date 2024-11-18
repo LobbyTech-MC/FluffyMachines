@@ -68,7 +68,7 @@ public class Events implements Listener {
             if (target instanceof Player && WateringCan.updateUses(wateringCan, p, item, 3)) {
                 Utils.send(p, "&b喷水!");
                 Utils.send((Player) target, "&b你被水溅到了" + p.getDisplayName() + "!");
-                ((Player) target).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 1));
+                ((Player) target).addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 1));
             }
         }
     }
