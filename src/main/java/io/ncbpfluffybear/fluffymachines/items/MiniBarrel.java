@@ -45,7 +45,8 @@ public class MiniBarrel extends Barrel {
             p.closeInventory();
             Utils.send(p, "&e请输入迷你蓬松箱子的容量. 最大限制为: " + barrelCapacity.getValue());
             ChatUtils.awaitInput(p, message -> {
-                int renameSize = NumberUtils.getInt(message, 0);
+                String cleanMsg = message.replaceAll("[^0-9]", "");
+                int renameSize = NumberUtils.getInt(cleanMsg, 0);
 
                 if (renameSize == 0 || renameSize > barrelCapacity.getValue()) {
                     Utils.send(p, "&c箱子容量必须为: 0 至 " + barrelCapacity.getValue());
