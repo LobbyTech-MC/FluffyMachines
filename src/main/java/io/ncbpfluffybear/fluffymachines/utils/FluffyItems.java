@@ -292,9 +292,9 @@ public class FluffyItems {
     public static final SlimefunItemStack ADVANCED_AUTO_DISENCHANTER = new SlimefunItemStack(
             "ADVANCED_AUTO_DISENCHANTER",
             Material.ENCHANTING_TABLE,
-            "&c高级全自动驱魔机",
+            "&c高级全自动祛魔机",
             "",
-            "&7从一个物品中移除第一个附魔",
+            "&7从一个物品中移除一个指定附魔",
             "&7需要一本&6远古之书&7来操作",
             "",
             LoreBuilderDynamic.powerBuffer(AdvancedAutoDisenchanter.CAPACITY),
