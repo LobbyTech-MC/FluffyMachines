@@ -36,7 +36,7 @@
     </repositories>
 
     <build>
-        <finalName>[粘液科技]${project.name}汉化版${project.version}</finalName>
+        <finalName>[sf]${project.name}汉化版${project.version}</finalName>
         <defaultGoal>clean package</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
