@@ -47,10 +47,12 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
 
     private static final int DELAY = 500; // 500ms
     private final Map<Player, Long> timeouts;
+    private Block storedBlock;
 
     public Dolly(ItemGroup category, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(category, item, recipeType, recipe);
         this.timeouts = new HashMap<>();
+        this.storedBlock = null;
         addItemSetting(canPickupLockedChest);
     }
 
@@ -83,6 +85,7 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
             }
 
             if (canPickupChest(b, p)) {
+            	this.storedBlock = b;
                 // Create dolly if not already one
                 ItemMeta meta = dolly.getItemMeta();
                 if (!PlayerBackpack.getBackpackUUID(meta).isPresent() && !PlayerBackpack.getBackpackID(meta).isPresent()){
@@ -109,7 +112,15 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
                     e.getPlayer(), b.getLocation(), Interaction.PLACE_BLOCK)
             ) {
                 // Place new chest
-                placeChest(dolly, b.getRelative(e.getClickedFace()), p);
+            	//原来取出箱子的方块 确保箱子已经被拿走 防止刷物品
+            	if (this.storedBlock == null || this.storedBlock.getType() == Material.AIR) {
+            		placeChest(dolly, b.getRelative(e.getClickedFace()), p);
+            	} else {
+            		Utils.send(p, "&c箱子搬运中...搬运完成前请勿在搬运的箱子的原位置放置方块哦!");
+            		Utils.send(p, "&c箱子搬运完成后才能放置搬运的箱子哦!");
+                    return;
+            	}
+                
             }
         };
     }
