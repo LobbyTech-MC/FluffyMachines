@@ -113,10 +113,10 @@ public class Dolly extends SimpleSlimefunItem<ItemUseHandler> {
             ) {
                 // Place new chest
             	//原来取出箱子的方块 确保箱子已经被拿走 防止刷物品
-            	if (this.storedBlock == null || this.storedBlock.getType() == Material.AIR) {
+            	if (this.storedBlock.getType() != Material.CHEST) {
             		placeChest(dolly, b.getRelative(e.getClickedFace()), p);
             	} else {
-            		Utils.send(p, "&c箱子搬运中...搬运完成前请勿在搬运的箱子的原位置放置方块哦!");
+            		Utils.send(p, "&c箱子搬运中...请勿在搬运前箱子的原位置放置其他箱子哦!");
             		Utils.send(p, "&c箱子搬运完成后才能放置搬运的箱子哦!");
                     return;
             	}
