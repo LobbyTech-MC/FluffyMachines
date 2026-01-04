@@ -139,7 +139,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
                 Block b = e.getBlock();
                 Player p = e.getPlayer();
                 BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
-                int capacity = getCapacity(b);
+                int capacity = getCapacity(b);  //java.lang.IllegalStateException: Unable to access data that is pending removal!
                 int stored = getStored(b);
 
                 if (inv != null) {
