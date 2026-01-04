@@ -443,7 +443,15 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
      */
     private boolean matchMeta(ItemStack item1, ItemStack item2) {
         // It seems the meta comparisons are heavier than type checks
-        return item1.getType().equals(item2.getType()) && item1.getItemMeta().equals(item2.getItemMeta());
+        if (!item1.getType().equals(item2.getType())) {
+            return false;
+        }
+
+        if (!item1.hasItemMeta() && !item2.hasItemMeta()) {
+            return true; // Match by type
+        }
+
+        return item1.getItemMeta().equals(item2.getItemMeta());
     }
 
     /**
