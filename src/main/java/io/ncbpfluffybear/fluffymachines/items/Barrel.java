@@ -137,7 +137,6 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
     private ItemHandler onBreak() {
         return new BlockBreakHandler(false, false) {
             @Override
-            @EventHandler(priority = EventPriority.LOW)
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
             	Block b = e.getBlock();
                 Player p = e.getPlayer();
@@ -225,7 +224,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
                     }
 
                 }
-            }
+             }
         };
     }
 
