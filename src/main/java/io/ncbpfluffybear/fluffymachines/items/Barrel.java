@@ -30,6 +30,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -135,12 +137,12 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
     private ItemHandler onBreak() {
         return new BlockBreakHandler(false, false) {
             @Override
+            @EventHandler(priority = EventPriority.LOW)
             public void onPlayerBreak(@Nonnull BlockBreakEvent e, @Nonnull ItemStack item, @Nonnull List<ItemStack> drops) {
-            	e.setCancelled(true);
             	Block b = e.getBlock();
                 Player p = e.getPlayer();
                 BlockMenu inv = StorageCacheUtils.getMenu(b.getLocation());
-                int capacity = getCapacity(b);  //如果没有 e.setCancelled(true); 则 java.lang.IllegalStateException: Unable to access data that is pending removal!
+                int capacity = getCapacity(b);  //java.lang.IllegalStateException: Unable to access data that is pending removal!
                 int stored = getStored(b);
 
                 if (inv != null) {
@@ -149,7 +151,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
 
                     if (breakOnlyWhenEmpty.getValue() && stored != 0) {
                         Utils.send(p, "&c请先把里面的物品拿走后再打破它!");
-                        //e.setCancelled(true);
+                        e.setCancelled(true);
                         return;
                     }
 
@@ -161,7 +163,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
 
                     if (itemCount > 5) {
                         Utils.send(p, "&c在打破它之前,最好先把里面的东西拿走!");
-                        //e.setCancelled(true);
+                        e.setCancelled(true);
                         return;
                     }
 
@@ -197,7 +199,7 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
                             setStored(b, stored - OVERFLOW_AMOUNT);
                             updateMenu(b, inv, true, capacity);
 
-                            //e.setCancelled(true);
+                            e.setCancelled(true);
                         } else {
 
                             // Everything greater than 1 stack
@@ -223,7 +225,6 @@ public class Barrel extends NonHopperableBlock implements DoubleHologramOwner {
                     }
 
                 }
-                e.setCancelled(false);
             }
         };
     }
