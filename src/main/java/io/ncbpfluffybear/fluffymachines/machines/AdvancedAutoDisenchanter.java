@@ -234,6 +234,7 @@ public class AdvancedAutoDisenchanter extends SlimefunItem implements EnergyNetC
         // Remove enchant from input
         input.removeEnchantment(outputEnchant);
 
+        input.setAmount(1);
         inv.pushItem(input, OUTPUT_SLOTS);
         inv.pushItem(enchantedBook, OUTPUT_SLOTS);
         inv.consumeItem(ITEM_SLOT);
